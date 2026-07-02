@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<title>Sol: your light, right now</title>
+<meta name="description" content="A calm daily guide to morning light, vitamin D, and winding down.">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sol">
+<meta name="theme-color" content="#0b0e1a">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='14' fill='%23f5b64e'/%3E%3Ccircle cx='32' cy='32' r='22' fill='none' stroke='%23f5b64e' stroke-opacity='.35' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="manifest" href='data:application/manifest+json,{"name":"Sol","short_name":"Sol","display":"standalone","background_color":"%230b0e1a","theme_color":"%230b0e1a","start_url":"."}'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* night defaults; themes override */
+    --bg-top: #0b0e1a;
+    --bg-bottom: #11142a;
+    --glow: rgba(99, 112, 190, 0.18);
+    --card: rgba(255, 255, 255, 0.055);
+    --card-border: rgba(255, 255, 255, 0.09);
+    --ink: #f2f0ec;
+    --ink-dim: rgba(242, 240, 236, 0.62);
+    --ink-faint: rgba(242, 240, 236, 0.38);
+    --accent: #9aa8ff;
+    --accent-soft: rgba(154, 168, 255, 0.16);
+    --sun: #f5b64e;
+    --radius-lg: 28px;
+    --radius-md: 20px;
+    --serif: "Fraunces", Georgia, serif;
+    --sans: "Instrument Sans", -apple-system, "Helvetica Neue", sans-serif;
+  }
+  .theme-dawn    { --bg-top:#141a33; --bg-bottom:#3a3560; --glow:rgba(214,151,131,.22); --accent:#e8a487; --accent-soft:rgba(232,164,135,.16); }
+  .theme-morning { --bg-top:#182036; --bg-bottom:#4a4468; --glow:rgba(245,182,78,.26);  --accent:#f5c46e; --accent-soft:rgba(245,196,110,.16); }
+  .theme-midday  { --bg-top:#1a2440; --bg-bottom:#3d4d78; --glow:rgba(255,232,170,.28); --accent:#ffe0a1; --accent-soft:rgba(255,224,161,.15); }
+  .theme-golden  { --bg-top:#1c1830; --bg-bottom:#5c3a4a; --glow:rgba(240,146,96,.26);  --accent:#f0a370; --accent-soft:rgba(240,163,112,.16); }
+  .theme-evening { --bg-top:#100f22; --bg-bottom:#33284e; --glow:rgba(196,140,170,.2);  --accent:#d3a0c0; --accent-soft:rgba(211,160,192,.15); }
+  .theme-night   { --bg-top:#0b0e1a; --bg-bottom:#11142a; --glow:rgba(99,112,190,.18);  --accent:#9aa8ff; --accent-soft:rgba(154,168,255,.16); }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { height: 100%; }
+  body {
+    min-height: 100%;
+    font-family: var(--sans);
+    color: var(--ink);
+    background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 130%);
+    background-attachment: fixed;
+    transition: background 1.2s ease;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* soft ambient glow behind the top of the page */
+  .sky {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background: radial-gradient(ellipse 90% 42% at 50% -6%, var(--glow), transparent 70%);
+    transition: background 1.2s ease;
+  }
+  /* faint grain so gradients don't band */
+  .sky::after {
+    content: ""; position: absolute; inset: 0; opacity: .05; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .app {
+    position: relative; z-index: 1;
+    max-width: 430px; margin: 0 auto;
+    padding: calc(env(safe-area-inset-top, 0px) + 20px) 20px calc(env(safe-area-inset-bottom, 0px) + 28px);
+    display: flex; flex-direction: column; gap: 14px;
+  }
+
+  /* ---------- header ---------- */
+  header { display: flex; align-items: baseline; justify-content: space-between; padding: 2px 4px 4px; }
+  .wordmark { font-family: var(--serif); font-weight: 400; font-size: 22px; letter-spacing: .01em; }
+  .wordmark span { color: var(--accent); }
+  .head-right { display: flex; align-items: center; gap: 14px; }
+  .date-line { font-size: 13px; color: var(--ink-faint); font-weight: 500; }
+  .gear {
+    background: none; border: none; color: var(--ink-dim); cursor: pointer;
+    font-size: 18px; line-height: 1; padding: 12px; margin: -12px; transform: translateY(2px);
+  }
+
+  /* ---------- cards ---------- */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    padding: 22px;
+    opacity: 0; transform: translateY(14px);
+    animation: rise .7s cubic-bezier(.22,.9,.3,1) forwards;
+  }
+  .card:nth-of-type(2) { animation-delay: .08s; }
+  .card:nth-of-type(3) { animation-delay: .16s; }
+  .card:nth-of-type(4) { animation-delay: .24s; }
+  .card:nth-of-type(5) { animation-delay: .32s; }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+
+  /* ---------- hero ---------- */
+  .hero { padding: 18px 22px 20px; }
+  .hero-body { margin-top: 16px; }
+  .hero-state {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--accent); background: var(--accent-soft);
+    padding: 6px 12px; border-radius: 100px; margin-bottom: 14px;
+  }
+  .hero-state .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: breathe 3.2s ease-in-out infinite; }
+  @keyframes breathe { 0%,100% { opacity: .4; transform: scale(.85);} 50% { opacity: 1; transform: scale(1);} }
+  .hero h1 { font-family: var(--serif); font-weight: 400; font-size: 27px; line-height: 1.15; letter-spacing: -.01em; margin-bottom: 6px; }
+  .hero p { font-size: 14px; line-height: 1.5; color: var(--ink-dim); max-width: 36ch; }
+  .hero .action { margin-top: 10px; font-size: 14px; color: var(--ink-dim); font-weight: 500; line-height: 1.45; }
+  .hero .action em { font-style: normal; color: var(--accent); font-weight: 600; }
+  .action-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; }
+  .checkin {
+    font-family: var(--sans); font-size: 14px; font-weight: 600;
+    color: #171308;
+    background: linear-gradient(135deg, #ffd98a, var(--sun));
+    border: none; border-radius: 100px; padding: 11px 18px;
+    cursor: pointer; white-space: nowrap;
+    box-shadow: 0 4px 18px rgba(245, 182, 78, 0.22);
+    transition: transform .15s ease, box-shadow .3s ease, opacity .3s ease;
+  }
+  .checkin:active { transform: scale(.96); }
+  .checkin.done {
+    background: var(--accent-soft); color: var(--accent);
+    box-shadow: none; cursor: default;
+  }
+  .streak-mini {
+    margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+    font-size: 12px; font-weight: 500; color: var(--ink-dim);
+  }
+
+  /* ---------- sun arc / timeline ---------- */
+  .arc-wrap { position: relative; margin: 4px 0 2px; }
+  .arc-wrap svg { display: block; width: 100%; height: auto; }
+  .arc-track { stroke: rgba(255,255,255,.1); }
+  .arc-day { stroke: url(#arcGrad); }
+  .arc-times { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-faint); font-weight: 500; margin-top: -6px; padding: 0 6px; }
+  .arc-times b { display: block; color: var(--ink-dim); font-weight: 600; font-size: 12.5px; }
+
+  .windows { display: flex; flex-direction: column; gap: 2px; margin-top: 16px; }
+  .win {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 6px; border-radius: 12px;
+    font-size: 14px;
+  }
+  .win.now { background: var(--accent-soft); }
+  .win .w-icon { width: 26px; text-align: center; font-size: 15px; flex: none; }
+  .win .w-name { font-weight: 500; }
+  .win .w-time { margin-left: auto; color: var(--ink-dim); font-variant-numeric: tabular-nums; font-size: 13.5px; }
+  .win.past { opacity: .42; }
+  .win.now .w-time { color: var(--accent); font-weight: 600; }
+
+  /* ---------- context chips ---------- */
+  .chips { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .chip {
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: var(--radius-md); padding: 13px 11px;
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    opacity: 0; animation: rise .7s cubic-bezier(.22,.9,.3,1) forwards; animation-delay: .2s;
+    min-width: 0;
+  }
+  .chip .c-label { font-size: 10.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px; }
+  .chip .c-value { font-size: 17px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chip .c-sub { font-size: 11px; color: var(--ink-dim); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -.01em; }
+  .uv-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; transform: translateY(-1px); }
+
+  /* ---------- today's light moments ---------- */
+  .moment-dots { display: flex; gap: 8px; }
+  .moment-dots span {
+    width: 27px; height: 27px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 13px;
+    background: rgba(255,255,255,.06); border: 1px solid var(--card-border);
+    opacity: .4; filter: grayscale(.5);
+    transition: opacity .3s ease, filter .3s ease;
+  }
+  .moment-dots span.hit {
+    opacity: 1; filter: none;
+    background: rgba(245,182,78,.14); border-color: rgba(245,182,78,.45);
+    box-shadow: 0 0 10px rgba(245,182,78,.25);
+    animation: pop .4s cubic-bezier(.3,1.4,.5,1);
+  }
+  @keyframes pop { 0% { transform: scale(.3); } 70% { transform: scale(1.3); } 100% { transform: scale(1); } }
+  .w-done { color: var(--sun); margin-left: 7px; font-weight: 700; }
+
+  /* ---------- footer ---------- */
+  footer { font-size: 10.5px; line-height: 1.55; color: var(--ink-faint); text-align: center; padding: 6px 14px 0; opacity: 0; animation: rise .7s ease forwards; animation-delay: .45s; }
+
+  /* ---------- location prompt / error states ---------- */
+  .state-card { text-align: center; padding: 34px 24px; }
+  .state-card .big-sun { font-size: 40px; margin-bottom: 14px; display: block; animation: breathe 3.2s ease-in-out infinite; }
+  .state-card h2 { font-family: var(--serif); font-weight: 400; font-size: 26px; margin-bottom: 8px; }
+  .state-card p { font-size: 14px; color: var(--ink-dim); line-height: 1.5; margin-bottom: 18px; }
+  .btn {
+    font-family: var(--sans); font-size: 15px; font-weight: 600;
+    border: none; border-radius: 14px; padding: 14px 22px; cursor: pointer;
+    background: linear-gradient(135deg, #ffd98a, var(--sun)); color: #171308;
+    box-shadow: 0 6px 24px rgba(245,182,78,.25);
+  }
+  .btn.ghost { background: none; box-shadow: none; color: var(--ink-dim); font-weight: 500; margin-top: 4px; }
+
+  /* ---------- onboarding ---------- */
+  .ob-rows { margin: 6px 0 22px; text-align: left; }
+  .ob-row { display: flex; gap: 14px; align-items: flex-start; padding: 11px 2px; }
+  .ob-row > span { font-size: 20px; line-height: 1.2; flex: none; }
+  .ob-row b { display: block; font-size: 14.5px; font-weight: 600; margin-bottom: 2px; }
+  .ob-row small { font-size: 13px; color: var(--ink-dim); line-height: 1.4; }
+  .ob-times { display: flex; gap: 12px; text-align: left; margin: 4px 0 18px; }
+  .ob-times .field { flex: 1; margin-bottom: 0; }
+  .state-card h2 .opt { font-size: 14px; color: var(--ink-faint); font-family: var(--sans); }
+  .ob-dots { display: flex; gap: 6px; justify-content: center; margin-top: 20px; }
+  .ob-dots span { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,.18); transition: background .3s ease; }
+  .ob-dots span.on { background: var(--accent); }
+
+  /* ---------- day glance (for trackers) ---------- */
+  .glance {
+    text-align: center; font-size: 12.5px; color: var(--ink-faint); font-weight: 500;
+    margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.07);
+    font-variant-numeric: tabular-nums;
+  }
+  .glance b { color: var(--ink-dim); font-weight: 600; }
+
+  /* ---------- settings sheet ---------- */
+  .sheet-veil {
+    position: fixed; inset: 0; z-index: 40; background: rgba(5,6,14,.55);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    opacity: 0; pointer-events: none; transition: opacity .3s ease;
+  }
+  .sheet {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+    max-width: 430px; margin: 0 auto;
+    background: linear-gradient(180deg, #191d33, #12152a);
+    border: 1px solid var(--card-border); border-bottom: none;
+    border-radius: 26px 26px 0 0;
+    padding: 14px 22px calc(env(safe-area-inset-bottom, 0px) + 26px);
+    transform: translateY(105%); transition: transform .38s cubic-bezier(.3,.9,.3,1);
+    max-height: 86vh; overflow-y: auto;
+  }
+  body.sheet-open .sheet { transform: none; }
+  body.sheet-open .sheet-veil { opacity: 1; pointer-events: auto; }
+  .grabber { width: 38px; height: 4px; border-radius: 4px; background: rgba(255,255,255,.2); margin: 0 auto 18px; }
+  .sheet h2 { font-family: var(--serif); font-weight: 400; font-size: 24px; margin-bottom: 18px; }
+  .field { margin-bottom: 18px; }
+  .field label { display: block; font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 8px; }
+  .field input, .field select {
+    width: 100%; font-family: var(--sans); font-size: 16px; color: var(--ink);
+    background: rgba(255,255,255,.06); border: 1px solid var(--card-border);
+    border-radius: 12px; padding: 13px 14px; outline: none; appearance: none;
+  }
+  .field input:focus { border-color: var(--accent); }
+  .seg { display: flex; background: rgba(255,255,255,.06); border: 1px solid var(--card-border); border-radius: 12px; padding: 3px; }
+  .seg button {
+    flex: 1; font-family: var(--sans); font-size: 13.5px; font-weight: 500; color: var(--ink-dim);
+    background: none; border: none; border-radius: 9px; padding: 10px 4px; cursor: pointer;
+  }
+  .seg button.on { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .geo-results { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; }
+  .geo-results button {
+    text-align: left; font-family: var(--sans); font-size: 14.5px; color: var(--ink);
+    background: rgba(255,255,255,.05); border: 1px solid var(--card-border);
+    border-radius: 10px; padding: 11px 13px; cursor: pointer;
+  }
+  .sheet .save { width: 100%; margin-top: 6px; }
+  .loc-note { font-size: 12.5px; color: var(--ink-faint); margin-top: 8px; line-height: 1.5; }
+  .use-gps {
+    width: 100%; font-family: var(--sans); font-size: 14px; font-weight: 500; color: var(--accent);
+    background: var(--accent-soft); border: none; border-radius: 12px; padding: 12px; cursor: pointer; margin-bottom: 8px;
+  }
+
+  /* ---------- reminder toggles ---------- */
+  .rem-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 2px; font-size: 14.5px; }
+  .tog {
+    width: 46px; height: 27px; border-radius: 100px; flex: none;
+    background: rgba(255,255,255,.12); border: 1px solid var(--card-border);
+    position: relative; cursor: pointer; transition: background .25s ease;
+  }
+  .tog::after {
+    content: ""; position: absolute; top: 2px; left: 2px; width: 21px; height: 21px;
+    border-radius: 50%; background: #fff; opacity: .9; transition: transform .25s ease;
+  }
+  .tog.on { background: var(--sun); border-color: var(--sun); }
+  .tog.on::after { transform: translateX(19px); }
+
+  /* ---------- accessibility ---------- */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    .card, .chip { opacity: 1; transform: none; }
+  }
+
+  /* toast */
+  .toast {
+    position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 26px);
+    transform: translate(-50%, 80px); z-index: 60;
+    background: #1d2138; color: var(--ink); font-size: 14px; font-weight: 500;
+    border: 1px solid var(--card-border); border-radius: 100px; padding: 12px 20px;
+    transition: transform .4s cubic-bezier(.3,.9,.3,1); pointer-events: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,.4); white-space: nowrap;
+  }
+  .toast.show { transform: translate(-50%, 0); }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body class="theme-night">
+<div class="sky"></div>
+
+<div class="app" id="app">
+  <header>
+    <div class="wordmark">S<span>o</span>l</div>
+    <div class="head-right">
+      <div class="date-line" id="dateLine"></div>
+      <button class="gear" id="gearBtn" aria-label="Settings">⚙︎</button>
+    </div>
+  </header>
+
+  <!-- onboarding / location state -->
+  <div class="card state-card" id="stateCard">
+    <div class="ob-step" id="ob1">
+      <span class="big-sun">☀️</span>
+      <h2>Meet Sol</h2>
+      <p>Your body runs on light. Sol is a calm guide that tells you one thing at a time:</p>
+      <div class="ob-rows">
+        <div class="ob-row"><span>🌅</span><div><b>Morning light</b><small>when to step outside to anchor your day</small></div></div>
+        <div class="ob-row"><span>🌞</span><div><b>Vitamin D</b><small>when the sun is strong enough to count</small></div></div>
+        <div class="ob-row"><span>🌙</span><div><b>Wind-down</b><small>when to dim the lights for deeper sleep</small></div></div>
+      </div>
+      <button class="btn" id="ob1Next">Get started</button>
+    </div>
+    <div class="ob-step hidden" id="ob2">
+      <span class="big-sun">📍</span>
+      <h2 id="stateTitle">Where are you?</h2>
+      <p id="stateMsg">Sunrise, UV, and vitamin D all depend on where you stand. Your location never leaves your phone.</p>
+      <button class="btn" id="geoBtn">Use my location</button><br>
+      <button class="btn ghost" id="manualBtn">Enter a city instead</button>
+    </div>
+    <div class="ob-step hidden" id="ob3">
+      <span class="big-sun">⏰</span>
+      <h2>Your rhythm <small class="opt">(optional)</small></h2>
+      <p>Wake and bed times tune the light windows to your real day. Not sure? Skip it. Sol works fine without them.</p>
+      <div class="ob-times">
+        <div class="field"><label>Wake time</label><input type="time" id="obWake"></div>
+        <div class="field"><label>Bedtime</label><input type="time" id="obBed"></div>
+      </div>
+      <button class="btn" id="ob3Done">Show my day</button><br>
+      <button class="btn ghost" id="ob3Skip">Skip for now</button>
+    </div>
+    <div class="ob-dots"><span id="obd1" class="on"></span><span id="obd2"></span><span id="obd3"></span></div>
+  </div>
+
+  <!-- main UI -->
+  <div id="main" class="hidden" style="display:contents">
+    <div class="card hero" id="heroCard">
+      <div class="hero-state"><span class="dot"></span><span id="heroState">—</span></div>
+      <div class="arc-wrap">
+        <svg viewBox="0 0 340 148" id="arcSvg">
+          <defs>
+            <linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#e8a487"/>
+              <stop offset=".35" stop-color="#ffd98a"/>
+              <stop offset=".65" stop-color="#ffe8b0"/>
+              <stop offset="1" stop-color="#f0a370"/>
+            </linearGradient>
+          </defs>
+          <path class="arc-track" d="M 50 140 A 120 120 0 0 1 290 140" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="1 7"/>
+          <path class="arc-day" id="arcDay" d="M 50 140 A 120 120 0 0 1 290 140" fill="none" stroke-width="3" stroke-linecap="round"/>
+          <g id="sunDot">
+            <circle r="12" fill="rgba(245,182,78,.22)"/>
+            <circle r="6" fill="#ffd98a"/>
+          </g>
+          <g id="moonDot" class="hidden">
+            <circle r="5.5" fill="#c9d2ff" opacity=".9"/>
+          </g>
+        </svg>
+      </div>
+      <div class="arc-times">
+        <div>Sunrise<b id="tSunrise">—</b></div>
+        <div style="text-align:right">Sunset<b id="tSunset">—</b></div>
+      </div>
+      <div class="hero-body">
+        <h1 id="heroTitle">—</h1>
+        <p id="heroSub">—</p>
+        <div class="action" id="heroAction"></div>
+        <div class="action-row">
+          <button class="checkin hidden" id="checkinBtn">I got outside ☀️</button>
+          <div class="streak-mini">
+            <div class="moment-dots" id="momentDots">
+              <span data-m="morning" title="Morning light">🌅</span><span data-m="midday" title="Daylight">🌞</span><span data-m="evening" title="Wind-down">🌙</span>
+            </div>
+            <span id="streakLabel"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="timelineCard">
+      <div class="windows" id="windows"></div>
+      <div class="glance" id="glance"></div>
+    </div>
+
+    <div class="chips">
+      <div class="chip">
+        <div class="c-label">UV index</div>
+        <div class="c-value" id="uvValue">—</div>
+        <div class="c-sub" id="uvSub">—</div>
+      </div>
+      <div class="chip">
+        <div class="c-label">Weather</div>
+        <div class="c-value" id="wxValue">—</div>
+        <div class="c-sub" id="wxSub">—</div>
+      </div>
+      <div class="chip">
+        <div class="c-label">Vitamin D</div>
+        <div class="c-value" id="vdValue">—</div>
+        <div class="c-sub" id="vdSub">—</div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>Sol offers general wellness guidance based on sunlight, UV, weather, and time of day. It does not provide medical advice or diagnose or treat vitamin D deficiency.</footer>
+</div>
+
+<!-- settings -->
+<div class="sheet-veil" id="veil"></div>
+<div class="sheet" id="sheet" role="dialog" aria-label="Settings">
+  <div class="grabber"></div>
+  <h2>Settings</h2>
+
+  <div class="field">
+    <label>Location</label>
+    <button class="use-gps" id="gpsBtn">📍 Use my current location</button>
+    <input type="text" id="cityInput" placeholder="Or search a city…" autocomplete="off">
+    <div class="geo-results" id="geoResults"></div>
+    <div class="loc-note" id="locNote"></div>
+  </div>
+
+  <div class="field">
+    <label>Wake time <span style="text-transform:none;letter-spacing:0;font-weight:400">(optional)</span></label>
+    <input type="time" id="wakeInput">
+  </div>
+
+  <div class="field">
+    <label>Bedtime <span style="text-transform:none;letter-spacing:0;font-weight:400">(optional)</span></label>
+    <input type="time" id="bedInput">
+  </div>
+
+  <div class="field">
+    <label>Skin &amp; sun</label>
+    <div class="seg" id="skinSeg">
+      <button data-v="fair">Burns easily</button>
+      <button data-v="medium" class="on">Medium</button>
+      <button data-v="dark">Rarely burns</button>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Units</label>
+    <div class="seg" id="unitSeg">
+      <button data-v="f" class="on">°F</button>
+      <button data-v="c">°C</button>
+    </div>
+  </div>
+
+  <div class="field">
+    <label>Reminders</label>
+    <div class="rem-row"><span>🌅 Morning light</span><button class="tog" id="remMorning" aria-label="Morning light reminder"></button></div>
+    <div class="rem-row"><span>🌞 Vitamin D window</span><button class="tog" id="remMidday" aria-label="Vitamin D reminder"></button></div>
+    <div class="rem-row"><span>🌙 Evening wind-down</span><button class="tog" id="remEvening" aria-label="Evening wind-down reminder"></button></div>
+    <div class="loc-note" id="remNote"></div>
+    <button class="use-gps hidden" id="icsBtn" style="margin-top:10px">📅 Add reminders to my calendar</button>
+  </div>
+
+  <button class="btn save" id="saveBtn">Done</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ============================================================
+   Sol — single-file circadian rhythm companion
+   Data: Open-Meteo (weather/UV/geocoding). Solar math: local.
+   Storage: localStorage only. No backend, no accounts.
+   Debug: append ?sim=HH:MM (or full ISO) to simulate a time.
+   ============================================================ */
+
+const $ = id => document.getElementById(id);
+const LS = {
+  get(k, fb) { try { const v = localStorage.getItem("sol_" + k); return v == null ? fb : JSON.parse(v); } catch { return fb; } },
+  set(k, v) { try { localStorage.setItem("sol_" + k, JSON.stringify(v)); } catch {} }
+};
+
+/* ---------- simulated clock for testing ---------- */
+const simParam = new URLSearchParams(location.search).get("sim");
+let simOffset = 0;
+if (simParam) {
+  const target = /^\d{1,2}:\d{2}$/.test(simParam)
+    ? new Date(new Date().toDateString() + " " + simParam)
+    : new Date(simParam);
+  if (!isNaN(target)) simOffset = target - Date.now();
+}
+const now = () => new Date(Date.now() + simOffset);
+
+/* ---------- solar math (NOAA approximation) ---------- */
+const rad = Math.PI / 180;
+function dayOfYear(d) {
+  return Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5);
+}
+function solarDeclination(d) {
+  return -23.44 * rad * Math.cos(2 * Math.PI / 365 * (dayOfYear(d) + 10));
+}
+function equationOfTime(d) { // minutes
+  const b = 2 * Math.PI * (dayOfYear(d) - 81) / 364;
+  return 9.87 * Math.sin(2 * b) - 7.53 * Math.cos(b) - 1.5 * Math.sin(b);
+}
+function solarElevation(lat, lng, when) {
+  const decl = solarDeclination(when);
+  const utcHours = when.getUTCHours() + when.getUTCMinutes() / 60 + when.getUTCSeconds() / 3600;
+  const solarTime = utcHours + lng / 15 + equationOfTime(when) / 60; // hours
+  const hourAngle = (solarTime - 12) * 15 * rad;
+  const latR = lat * rad;
+  const sinEl = Math.sin(latR) * Math.sin(decl) + Math.cos(latR) * Math.cos(decl) * Math.cos(hourAngle);
+  return Math.asin(Math.max(-1, Math.min(1, sinEl))) / rad; // degrees
+}
+function sunTimes(lat, lng, d) {
+  // returns {sunrise, sunset, solarNoon} as Dates, or nulls (polar day/night)
+  const decl = solarDeclination(d);
+  const latR = lat * rad;
+  const cosH = (Math.sin(-0.833 * rad) - Math.sin(latR) * Math.sin(decl)) / (Math.cos(latR) * Math.cos(decl));
+  const noonUTCh = 12 - lng / 15 - equationOfTime(d) / 60;
+  const mkUTC = h => {
+    const base = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    return new Date(base.getTime() + h * 36e5);
+  };
+  const solarNoon = mkUTC(noonUTCh);
+  if (cosH < -1) return { sunrise: null, sunset: null, solarNoon, polar: "day" };
+  if (cosH > 1)  return { sunrise: null, sunset: null, solarNoon, polar: "night" };
+  const H = Math.acos(cosH) / rad / 15; // half day length in hours
+  return { sunrise: mkUTC(noonUTCh - H), sunset: mkUTC(noonUTCh + H), solarNoon, polar: null };
+}
+
+/* ---------- formatting ---------- */
+function fmtTime(d) {
+  if (!d) return "—";
+  return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }).replace(/\s?([AP]M)/i, (m, p) => " " + p.toUpperCase());
+}
+function fmtDur(ms) {
+  const m = Math.max(0, Math.round(ms / 6e4));
+  const h = Math.floor(m / 60), r = m % 60;
+  if (h && r) return `${h}h ${r}m`;
+  if (h) return `${h}h`;
+  return `${r}m`;
+}
+const dayKey = d => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+function fmtRange(a, b) {
+  if (!a || !b) return "—";
+  const sa = fmtTime(a), sb = fmtTime(b);
+  const ma = sa.slice(-2), mb = sb.slice(-2);
+  return ma === mb ? sa.slice(0, -3) + "–" + sb : sa + " – " + sb;
+}
+
+/* ---------- weather code labels (WMO) ---------- */
+function wxLabel(code) {
+  const map = {
+    0: ["Clear", "☀️"], 1: ["Mostly clear", "🌤"], 2: ["Partly cloudy", "⛅️"], 3: ["Overcast", "☁️"],
+    45: ["Foggy", "🌫"], 48: ["Foggy", "🌫"],
+    51: ["Light drizzle", "🌦"], 53: ["Drizzle", "🌦"], 55: ["Drizzle", "🌧"],
+    61: ["Light rain", "🌧"], 63: ["Rain", "🌧"], 65: ["Heavy rain", "🌧"],
+    66: ["Freezing rain", "🌧"], 67: ["Freezing rain", "🌧"],
+    71: ["Light snow", "🌨"], 73: ["Snow", "🌨"], 75: ["Heavy snow", "❄️"], 77: ["Snow", "🌨"],
+    80: ["Showers", "🌦"], 81: ["Showers", "🌧"], 82: ["Heavy showers", "🌧"],
+    85: ["Snow showers", "🌨"], 86: ["Snow showers", "❄️"],
+    95: ["Thunderstorm", "⛈"], 96: ["Thunderstorm", "⛈"], 99: ["Thunderstorm", "⛈"]
+  };
+  return map[code] || ["—", ""];
+}
+function uvInfo(uv) {
+  if (uv == null) return { cat: "—", color: "#888" };
+  if (uv < 3)  return { cat: "Low", color: "#7ed491" };
+  if (uv < 6)  return { cat: "Moderate", color: "#f2d066" };
+  if (uv < 8)  return { cat: "High", color: "#f2a25c" };
+  if (uv < 11) return { cat: "Very high", color: "#ef7070" };
+  return { cat: "Extreme", color: "#c77dde" };
+}
+
+/* ---------- settings ---------- */
+const settings = {
+  loc: LS.get("loc", null),          // {lat, lng, name}
+  wake: LS.get("wake", ""),          // "HH:MM"
+  bed: LS.get("bed", ""),
+  skin: LS.get("skin", "medium"),
+  units: LS.get("units", "f"),
+  reminders: LS.get("reminders", { morning: false, midday: false, evening: false })
+};
+
+/* ---------- tracking: three light moments per day ----------
+   morning = morning light, midday = daylight/vitamin D, evening = wind-down.
+   Days reset on their own; no chains, no guilt. */
+const MOMENTS = ["morning", "midday", "evening"];
+const MOMENT_LABELS = {
+  morning: ["I got my morning light ☀️", "Morning light ✓"],
+  midday:  ["I got some daylight ☀️", "Daylight ✓"],
+  evening: ["I'm winding down 🌙", "Winding down ✓"]
+};
+function getMoments() { return LS.get("moments", {}); }
+function todayMoments() { return getMoments()[dayKey(now())] || {}; }
+function logMoment(m) {
+  const all = getMoments();
+  const k = dayKey(now());
+  all[k] = { ...(all[k] || {}), [m]: true };
+  LS.set("moments", all);
+}
+// migrate the old single-tap checkins (each counted as a morning)
+(function migrateCheckins() {
+  const old = LS.get("checkins", null);
+  if (!old || !old.length) return;
+  const all = getMoments();
+  old.forEach(d => { all[d] = { ...(all[d] || {}), morning: true }; });
+  LS.set("moments", all);
+  try { localStorage.removeItem("sol_checkins"); } catch {}
+})();
+
+/* ---------- data fetch ---------- */
+let wx = null; // { tempF, tempC, code, cloud, uvNow, uvMax, uvPeak: Date, hourly: [{t: Date, uv}] , fetchedAt }
+
+async function fetchWeather(lat, lng) {
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}` +
+    `&current=temperature_2m,weather_code,cloud_cover,uv_index` +
+    `&hourly=uv_index&daily=uv_index_max&forecast_days=2&timezone=auto`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("weather fetch failed");
+  const j = await res.json();
+  const hourly = (j.hourly?.time || []).map((t, i) => ({ t: new Date(t), uv: j.hourly.uv_index[i] }));
+  // today's UV peak hour
+  const todayK = dayKey(now());
+  let uvPeak = null, uvMax = j.daily?.uv_index_max?.[0] ?? null, best = -1;
+  for (const h of hourly) {
+    if (dayKey(h.t) === todayK && h.uv > best) { best = h.uv; uvPeak = h.t; }
+  }
+  const tempC = j.current.temperature_2m;
+  wx = {
+    tempC, tempF: tempC * 9 / 5 + 32,
+    code: j.current.weather_code, cloud: j.current.cloud_cover,
+    uvNow: j.current.uv_index, uvMax, uvPeak, hourly,
+    fetchedAt: Date.now()
+  };
+  LS.set("wxCache", wx);
+}
+
+/* ---------- vitamin D window ----------
+   Conservative: solar elevation ≥ 30° AND forecast UV ≥ 3 (≥2.5 for fair skin).
+   Scans today's hours; returns {start, end} or null. */
+function vitaminDWindow(lat, lng) {
+  const uvNeeded = settings.skin === "fair" ? 2.5 : settings.skin === "dark" ? 3.5 : 3;
+  const uvAt = t => {
+    if (!wx?.hourly?.length) return null;
+    let bestH = null, bestGap = Infinity;
+    for (const h of wx.hourly) {
+      const gap = Math.abs(h.t - t);
+      if (gap < bestGap) { bestGap = gap; bestH = h; }
+    }
+    return bestH ? bestH.uv : null;
+  };
+  const base = now(); base.setHours(0, 0, 0, 0);
+  let start = null, end = null;
+  for (let m = 0; m < 1440; m += 10) {
+    const t = new Date(base.getTime() + m * 6e4);
+    const el = solarElevation(lat, lng, t);
+    const uv = uvAt(t);
+    const ok = el >= 30 && (uv == null ? el >= 38 : uv >= uvNeeded); // fall back to pure sun-angle if UV missing
+    if (ok && !start) start = t;
+    if (ok) end = t;
+  }
+  return start ? { start, end } : null;
+}
+
+/* ---------- circadian state machine ---------- */
+function computeDay(lat, lng) {
+  const t = now();
+  const st = sunTimes(lat, lng, t);
+  const { sunrise, sunset } = st;
+  const vd = vitaminDWindow(lat, lng);
+
+  // morning light window: sunrise → sunrise+2.5h; if wake set and later, wake → wake+90m
+  let mlStart = sunrise, mlEnd = sunrise ? new Date(sunrise.getTime() + 2.5 * 36e5) : null;
+  if (settings.wake && sunrise) {
+    const [h, m] = settings.wake.split(":").map(Number);
+    const wakeT = new Date(t); wakeT.setHours(h, m, 0, 0);
+    if (wakeT > sunrise) { mlStart = wakeT; mlEnd = new Date(wakeT.getTime() + 1.5 * 36e5); }
+  }
+  // dim-down: bedtime-2h if set, else sunset+45m
+  let dimStart = null;
+  if (settings.bed && sunset) {
+    const [h, m] = settings.bed.split(":").map(Number);
+    const bedT = new Date(t); bedT.setHours(h, m, 0, 0);
+    if (bedT.getHours() < 12) bedT.setDate(bedT.getDate() + (t.getHours() >= 12 ? 0 : 0)); // after-midnight bedtimes: keep same calendar day for display
+    dimStart = new Date(bedT.getTime() - 2 * 36e5);
+  } else if (sunset) {
+    dimStart = new Date(sunset.getTime() + 45 * 6e4);
+  }
+  const goldenStart = sunset ? new Date(sunset.getTime() - 60 * 6e4) : null;
+
+  return { t, sunrise, sunset, solarNoon: st.solarNoon, polar: st.polar, vd, mlStart, mlEnd, dimStart, goldenStart };
+}
+
+function pickState(day) {
+  const { t, sunrise, sunset, vd, mlStart, mlEnd, dimStart, goldenStart, polar } = day;
+  // tomorrow's sunrise, for evening/night "next best time" suggestions
+  const tmrw = new Date(t); tmrw.setDate(tmrw.getDate() + 1);
+  const nextRise = sunTimes(day.lat, day.lng, tmrw).sunrise;
+  const nextRiseRange = nextRise ? fmtRange(nextRise, new Date(nextRise.getTime() + 30 * 6e4)) : null;
+  const badWx = wx && [61,63,65,66,67,71,73,75,77,80,81,82,85,86,95,96,99].includes(wx.code);
+  const outsideLine = badWx
+    ? "Weather is rough right now, so sit near your brightest window, or step out briefly when it eases."
+    : null;
+
+  if (polar === "night") return {
+    key: "polarNight", label: "Polar night", title: "Little sun this season",
+    sub: "The sun stays below the horizon at your latitude right now. Bright indoor light in the morning and dim evenings still help your rhythm.",
+    action: "Bright light on waking, low light at night", moment: null
+  };
+  if (polar === "day") return {
+    key: "polarDay", label: "Midnight sun", title: "The sun is up around the clock",
+    sub: "Keep a steady rhythm: light anchors in the morning, and darken your bedroom well before sleep.",
+    action: "Darken your evenings on a schedule", moment: "midday"
+  };
+
+  if (t < sunrise) {
+    const gap = sunrise - t;
+    return {
+      key: "preDawn", label: "Before sunrise", title: "Prepare for morning light",
+      sub: "Light soon after sunrise is the strongest signal you can give your body clock.",
+      action: `☀️ Step outside <em>${fmtRange(sunrise, new Date(sunrise.getTime() + 30 * 6e4))}</em>`, moment: null
+    };
+  }
+  if (t >= sunrise && t < mlEnd && (!vd || t < vd.start)) {
+    const inWindow = t >= mlStart;
+    return {
+      key: "morning", label: "Morning light", title: inWindow ? "Get outside now" : "Morning light is here",
+      sub: outsideLine || "Even a cloudy sky is far brighter than indoor light.",
+      action: `☀️ Best time: <em>now, 10–20 min</em> · until ${fmtTime(mlEnd)}`, moment: "morning"
+    };
+  }
+  if (vd && t >= vd.start && t <= vd.end) {
+    const uv = wx?.uvNow;
+    const careful = uv != null && uv >= 6 ? " UV is high, so keep it short." : "";
+    return {
+      key: "vitd", label: "Vitamin D window", title: "Vitamin D possible now",
+      sub: outsideLine || `The sun is high enough for your skin to make vitamin D.${careful}`,
+      action: `☀️ Best time: <em>now, 10–15 min</em> · until ${fmtTime(vd.end)}`, moment: "midday"
+    };
+  }
+  if (sunset && t < goldenStart) {
+    const stillMorningish = t < new Date(sunrise.getTime() + 4 * 36e5);
+    return stillMorningish ? {
+      key: "lateMorning", label: "Daylight", title: "Still a good light window",
+      sub: outsideLine || "You haven't missed anything. Daylight now still counts.",
+      action: "☀️ Good time: <em>now</em> · a short walk counts", moment: "morning"
+    } : {
+      key: "afternoon", label: "Afternoon", title: "Anchor your afternoon",
+      sub: outsideLine || "A few minutes of daylight now sets up better sleep tonight.",
+      action: "☀️ Good time: <em>now</em> · even 5–10 min helps", moment: "midday"
+    };
+  }
+  if (sunset && t >= goldenStart && t < sunset) {
+    return {
+      key: "golden", label: "Golden hour", title: "Good evening light",
+      sub: "Warm, low sunlight is a gentle signal that the day is winding down.",
+      action: `🌇 Last light: <em>now until ${fmtTime(sunset)}</em>`, moment: "midday"
+    };
+  }
+  if (sunset && t >= sunset && dimStart && t < dimStart) {
+    return {
+      key: "dusk", label: "After sunset", title: "Dim down soon",
+      sub: `Ease toward warmer, lower light after ${fmtTime(dimStart)}.`,
+      action: nextRiseRange ? `☀️ Next light: <em>tomorrow ${nextRiseRange}</em>` : "Warm lamps, fewer bright screens", moment: "evening"
+    };
+  }
+  // dim window or night
+  return {
+    key: "night", label: "Night", title: "Protect sleep",
+    sub: "Keep light low and warm from here to protect tonight's sleep.",
+    action: nextRiseRange ? `☀️ Morning light: <em>tomorrow ${nextRiseRange}</em>` : "Low light only", moment: "evening"
+  };
+}
+
+/* ---------- rendering ---------- */
+function applyTheme(day) {
+  const { t, sunrise, sunset } = day;
+  let theme = "night";
+  if (sunrise && sunset) {
+    const dawnStart = new Date(sunrise.getTime() - 45 * 6e4);
+    const morningEnd = new Date(sunrise.getTime() + 2.5 * 36e5);
+    const goldenStart = new Date(sunset.getTime() - 60 * 6e4);
+    const duskEnd = new Date(sunset.getTime() + 60 * 6e4);
+    if (t >= dawnStart && t < sunrise) theme = "dawn";
+    else if (t >= sunrise && t < morningEnd) theme = "morning";
+    else if (t >= morningEnd && t < goldenStart) theme = "midday";
+    else if (t >= goldenStart && t < sunset) theme = "golden";
+    else if (t >= sunset && t < duskEnd) theme = "evening";
+  }
+  document.body.className = "theme-" + theme + (document.body.classList.contains("sheet-open") ? " sheet-open" : "");
+}
+
+function renderArc(day) {
+  const { t, sunrise, sunset } = day;
+  const svgNS = "http://www.w3.org/2000/svg";
+  const cx = 170, cy = 140, r = 120;
+  const pos = frac => {
+    const a = Math.PI - frac * Math.PI; // 180° → 0°
+    return { x: cx + r * Math.cos(a), y: cy - r * Math.sin(a) };
+  };
+  const sun = $("sunDot"), moon = $("moonDot"), arcDay = $("arcDay");
+  if (!sunrise || !sunset) { sun.classList.add("hidden"); moon.classList.add("hidden"); return; }
+  const total = Math.PI * r; // arc length ≈ 471 for r=150
+  arcDay.setAttribute("stroke-dasharray", total);
+  const dayFrac = Math.min(1, Math.max(0, (t - sunrise) / (sunset - sunrise)));
+  if (t >= sunrise && t <= sunset) {
+    arcDay.setAttribute("stroke-dashoffset", total * (1 - dayFrac));
+    const p = pos(dayFrac);
+    sun.setAttribute("transform", `translate(${p.x} ${p.y})`);
+    sun.classList.remove("hidden"); moon.classList.add("hidden");
+  } else {
+    // night: show completed (if after sunset) or empty (before sunrise) arc, moon travels the night span
+    arcDay.setAttribute("stroke-dashoffset", t > sunset ? 0 : total);
+    let nightFrac;
+    if (t > sunset) {
+      const nextRise = new Date(sunrise.getTime() + 864e5);
+      nightFrac = (t - sunset) / (nextRise - sunset);
+    } else {
+      const prevSet = new Date(sunset.getTime() - 864e5);
+      nightFrac = (t - prevSet) / (sunrise - prevSet);
+    }
+    const p = pos(Math.min(1, Math.max(0, nightFrac)));
+    moon.setAttribute("transform", `translate(${p.x} ${p.y})`);
+    moon.classList.remove("hidden"); sun.classList.add("hidden");
+  }
+}
+
+function renderWindows(day) {
+  const { t, sunrise, sunset, vd, mlStart, mlEnd, dimStart } = day;
+  const tm = todayMoments();
+  const rows = [];
+  if (sunrise) rows.push({ icon: "🌅", name: "Morning light", start: mlStart, end: mlEnd, time: fmtRange(mlStart, mlEnd), done: tm.morning });
+  if (vd) rows.push({ icon: "🌞", name: "Vitamin D", start: vd.start, end: vd.end, time: fmtRange(vd.start, vd.end), done: tm.midday });
+  else rows.push({ icon: "🌞", name: "Vitamin D", start: null, end: null, time: "Not today", muted: true });
+  if (dimStart) rows.push({ icon: "🌙", name: "Dim down", start: dimStart, end: null, time: `after ${fmtTime(dimStart)}`, done: tm.evening });
+
+  $("windows").innerHTML = rows.map(r => {
+    let cls = "win";
+    if (r.start && r.end && t >= r.start && t <= r.end) cls += " now";
+    else if (r.start && !r.end && t >= r.start) cls += " now";
+    else if ((r.end && t > r.end) || r.muted) cls += " past";
+    const done = r.done ? '<span class="w-done">✓</span>' : "";
+    return `<div class="${cls}"><span class="w-icon">${r.icon}</span><span class="w-name">${r.name}${done}</span><span class="w-time">${r.time}</span></div>`;
+  }).join("");
+}
+
+function renderChips() {
+  const uv = wx?.uvNow;
+  const info = uvInfo(uv);
+  $("uvValue").innerHTML = uv == null ? "—" : `<span class="uv-dot" style="background:${info.color}"></span>${Math.round(uv * 10) / 10}`;
+  $("uvSub").textContent = uv == null ? "Unavailable" : info.cat;
+
+  if (wx) {
+    const [label, emoji] = wxLabel(wx.code);
+    const temp = settings.units === "c" ? Math.round(wx.tempC) + "°" : Math.round(wx.tempF) + "°";
+    $("wxValue").textContent = `${temp}`;
+    $("wxSub").textContent = `${emoji} ${label}`;
+  } else {
+    $("wxValue").textContent = "—";
+    $("wxSub").textContent = "Unavailable right now";
+  }
+}
+
+function renderVitaminChip(day) {
+  const { t, vd } = day;
+  if (!vd) { $("vdValue").textContent = "Unlikely"; $("vdSub").textContent = "Sun stays too low today"; return; }
+  if (t < vd.start) { $("vdValue").textContent = "Later"; $("vdSub").textContent = `Opens ${fmtTime(vd.start)}`; }
+  else if (t <= vd.end) { $("vdValue").textContent = "Now"; $("vdSub").textContent = `Until ${fmtTime(vd.end)}`; }
+  else { $("vdValue").textContent = "Passed"; $("vdSub").textContent = "Back tomorrow"; }
+}
+
+function renderMoments() {
+  const tm = todayMoments();
+  const count = MOMENTS.filter(k => tm[k]).length;
+  document.querySelectorAll("#momentDots span").forEach(el =>
+    el.classList.toggle("hit", !!tm[el.dataset.m]));
+  $("streakLabel").textContent =
+    count === 0 ? "Three light moments a day" :
+    count === 3 ? "A full light day" :
+    `${count} of 3 today`;
+}
+
+function renderAll() {
+  if (!settings.loc) return;
+  const { lat, lng } = settings.loc;
+  const day = computeDay(lat, lng);
+  day.lat = lat; day.lng = lng;
+  const state = pickState(day);
+
+  // header date + location
+  $("dateLine").textContent = now().toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" }) +
+    (settings.loc.name ? " · " + settings.loc.name : "");
+
+  applyTheme(day);
+  $("heroState").textContent = state.label;
+  $("heroTitle").textContent = state.title;
+  $("heroSub").textContent = state.sub;
+  $("heroAction").innerHTML = state.action || "";
+
+  // contextual check-in for the current light moment
+  currentMoment = state.moment || null;
+  const btn = $("checkinBtn");
+  if (currentMoment) {
+    btn.classList.remove("hidden");
+    if (todayMoments()[currentMoment]) {
+      btn.textContent = MOMENT_LABELS[currentMoment][1];
+      btn.classList.add("done"); btn.disabled = true;
+    } else {
+      btn.textContent = MOMENT_LABELS[currentMoment][0];
+      btn.classList.remove("done"); btn.disabled = false;
+    }
+  } else {
+    btn.classList.add("hidden");
+  }
+
+  $("tSunrise").textContent = fmtTime(day.sunrise);
+  $("tSunset").textContent = fmtTime(day.sunset);
+  const fmtHour = d => d.toLocaleTimeString([], { hour: "numeric" }).replace(" ", "");
+  const uvPeakBit = wx?.uvPeak && wx?.uvMax != null ? ` · UV peak <b>${Math.round(wx.uvMax)}</b> at ${fmtHour(wx.uvPeak)}` : "";
+  $("glance").innerHTML = (day.sunrise && day.sunset)
+    ? `<b>${fmtDur(day.sunset - day.sunrise)}</b> daylight · noon <b>${fmtTime(day.solarNoon)}</b>${uvPeakBit}`
+    : "";
+  renderArc(day);
+  renderWindows(day);
+  renderChips();
+  renderVitaminChip(day);
+  renderMoments();
+  checkReminders(day);
+}
+let currentMoment = null;
+
+/* ---------- boot / location flow ---------- */
+let onboarding = !settings.loc && !LS.get("onboarded", false);
+function obStep(n) {
+  ["ob1", "ob2", "ob3"].forEach((id, i) => $(id).classList.toggle("hidden", i !== n - 1));
+  ["obd1", "obd2", "obd3"].forEach((id, i) => $(id).classList.toggle("on", i === n - 1));
+}
+function finishOnboarding() {
+  if ($("obWake").value) { settings.wake = $("obWake").value; LS.set("wake", settings.wake); }
+  if ($("obBed").value) { settings.bed = $("obBed").value; LS.set("bed", settings.bed); }
+  LS.set("onboarded", true); onboarding = false;
+  showMain(); renderAll();
+}
+$("ob1Next").addEventListener("click", () => obStep(2));
+$("ob3Done").addEventListener("click", finishOnboarding);
+$("ob3Skip").addEventListener("click", () => { $("obWake").value = ""; $("obBed").value = ""; finishOnboarding(); });
+
+function showMain() {
+  $("stateCard").classList.add("hidden");
+  $("main").classList.remove("hidden");
+}
+function showStateCard(title, msg, showGeo = true) {
+  $("stateCard").classList.remove("hidden");
+  $("main").classList.add("hidden");
+  $("stateTitle").textContent = title;
+  $("stateMsg").textContent = msg;
+  $("geoBtn").style.display = showGeo ? "" : "none";
+}
+
+async function startWithLocation(loc) {
+  settings.loc = loc;
+  LS.set("loc", loc);
+  if (onboarding) obStep(3); else showMain();
+  try {
+    await fetchWeather(loc.lat, loc.lng);
+  } catch {
+    const cached = LS.get("wxCache", null);
+    if (cached) {
+      wx = cached;
+      wx.hourly = (wx.hourly || []).map(h => ({ t: new Date(h.t), uv: h.uv }));
+      if (wx.uvPeak) wx.uvPeak = new Date(wx.uvPeak);
+      toast("Offline. Showing last known conditions");
+    } else {
+      toast("Weather unavailable, but sun times still work");
+    }
+  }
+  renderAll();
+}
+
+function requestGeo(fromSheet = false) {
+  if (!navigator.geolocation) { toast("Location not supported. Search a city instead"); return; }
+  const btn = fromSheet ? $("gpsBtn") : $("geoBtn");
+  const orig = btn.textContent;
+  btn.textContent = "Locating…";
+  navigator.geolocation.getCurrentPosition(async pos => {
+    const { latitude: lat, longitude: lng } = pos.coords;
+    let name = "";
+    try {
+      const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=&latitude=${lat}&longitude=${lng}`).catch(() => null);
+      // reverse geocoding isn't supported by this endpoint; keep name blank rather than guessing
+    } catch {}
+    btn.textContent = orig;
+    if (fromSheet) { $("locNote").textContent = "Using your current location."; closeSheet(); }
+    startWithLocation({ lat: +lat.toFixed(3), lng: +lng.toFixed(3), name });
+  }, () => {
+    btn.textContent = orig;
+    toast("Couldn't get location. Try a city search");
+    if (!fromSheet) openSheet();
+  }, { timeout: 12000, maximumAge: 600000 });
+}
+
+/* ---------- city search ---------- */
+let searchTimer = null;
+$("cityInput").addEventListener("input", e => {
+  clearTimeout(searchTimer);
+  const q = e.target.value.trim();
+  if (q.length < 2) { $("geoResults").innerHTML = ""; return; }
+  searchTimer = setTimeout(async () => {
+    try {
+      const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=5&language=en`);
+      const j = await r.json();
+      $("geoResults").innerHTML = (j.results || []).map((c, i) =>
+        `<button data-i="${i}">${c.name}${c.admin1 ? ", " + c.admin1 : ""}${c.country_code ? " · " + c.country_code : ""}</button>`).join("") || "";
+      $("geoResults").querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+        const c = j.results[+b.dataset.i];
+        $("cityInput").value = "";
+        $("geoResults").innerHTML = "";
+        $("locNote").textContent = `Using ${c.name}.`;
+        closeSheet();
+        startWithLocation({ lat: c.latitude, lng: c.longitude, name: c.name });
+      }));
+    } catch { $("geoResults").innerHTML = ""; }
+  }, 350);
+});
+
+/* ---------- settings sheet ---------- */
+function openSheet() {
+  $("wakeInput").value = settings.wake;
+  $("bedInput").value = settings.bed;
+  $("skinSeg").querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.v === settings.skin));
+  $("unitSeg").querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.v === settings.units));
+  $("locNote").textContent = settings.loc ? `Currently: ${settings.loc.name || settings.loc.lat + ", " + settings.loc.lng}` : "No location set yet.";
+  updateRemUI();
+  document.body.classList.add("sheet-open");
+}
+function closeSheet() { document.body.classList.remove("sheet-open"); }
+
+$("gearBtn").addEventListener("click", openSheet);
+$("veil").addEventListener("click", closeSheet);
+$("gpsBtn").addEventListener("click", () => requestGeo(true));
+$("geoBtn").addEventListener("click", () => requestGeo(false));
+$("manualBtn").addEventListener("click", openSheet);
+["skinSeg", "unitSeg"].forEach(id => $(id).addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  $(id).querySelectorAll("button").forEach(x => x.classList.remove("on"));
+  b.classList.add("on");
+}));
+$("saveBtn").addEventListener("click", () => {
+  settings.wake = $("wakeInput").value; LS.set("wake", settings.wake);
+  settings.bed = $("bedInput").value; LS.set("bed", settings.bed);
+  settings.skin = $("skinSeg").querySelector(".on")?.dataset.v || "medium"; LS.set("skin", settings.skin);
+  settings.units = $("unitSeg").querySelector(".on")?.dataset.v || "f"; LS.set("units", settings.units);
+  closeSheet();
+  renderAll();
+});
+
+/* ---------- reminders ----------
+   Browser notifications where supported (desktop/Android, app open).
+   iPhones don't allow web notifications without a server, so there we
+   generate a 2-week .ics calendar file with computed times instead. */
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+  (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const canNotify = "Notification" in window && !isIOS;
+const REM_COPY = {
+  morning: ["Morning light", "Good morning. Outdoor light is available now."],
+  midday:  ["Vitamin D window", "The vitamin D window is open."],
+  evening: ["Wind-down", "Sunset has passed. Start dimming down when you can."]
+};
+
+function anyReminderOn() { return MOMENTS.some(m => settings.reminders[m]); }
+
+function updateRemUI() {
+  [["morning","remMorning"],["midday","remMidday"],["evening","remEvening"]].forEach(([m, id]) => {
+    $(id).classList.toggle("on", !!settings.reminders[m]);
+    $(id).setAttribute("aria-pressed", !!settings.reminders[m]);
+  });
+  const note = $("remNote"), ics = $("icsBtn");
+  if (isIOS) {
+    note.textContent = anyReminderOn()
+      ? "iPhones don't allow web notifications, so tap below to add these as gentle calendar alerts for the next two weeks."
+      : "Turn one on to set up gentle daily reminders.";
+    ics.classList.toggle("hidden", !anyReminderOn());
+  } else if (canNotify) {
+    ics.classList.toggle("hidden", !anyReminderOn());
+    note.textContent = Notification.permission === "denied"
+      ? "Notifications are blocked in your browser settings."
+      : anyReminderOn()
+        ? "Sol notifies you when a window opens while it's running. For alerts that always fire, add them to your calendar below."
+        : "Up to three gentle nudges a day, never during sleep.";
+  } else {
+    note.textContent = anyReminderOn() ? "Tap below to add these to your calendar." : "";
+    ics.classList.toggle("hidden", !anyReminderOn());
+  }
+}
+
+[["morning","remMorning"],["midday","remMidday"],["evening","remEvening"]].forEach(([m, id]) => {
+  $(id).addEventListener("click", () => {
+    settings.reminders[m] = !settings.reminders[m];
+    LS.set("reminders", settings.reminders);
+    if (settings.reminders[m] && canNotify && Notification.permission === "default") {
+      Notification.requestPermission().then(updateRemUI);
+    }
+    updateRemUI();
+  });
+});
+
+// fire in-app notifications when a window opens (once per type per day)
+function checkReminders(day) {
+  if (!canNotify || Notification.permission !== "granted" || !anyReminderOn()) return;
+  const fired = LS.get("remFired", { date: "", types: [] });
+  const today = dayKey(now());
+  if (fired.date !== today) { fired.date = today; fired.types = []; }
+  const starts = { morning: day.mlStart, midday: day.vd?.start, evening: day.dimStart };
+  const t = now();
+  for (const m of MOMENTS) {
+    if (!settings.reminders[m] || fired.types.includes(m) || !starts[m]) continue;
+    const gap = t - starts[m];
+    if (gap >= 0 && gap < 5 * 6e4) {
+      try { new Notification("Sol · " + REM_COPY[m][0], { body: REM_COPY[m][1], icon: "icon.png" }); } catch {}
+      fired.types.push(m);
+    }
+  }
+  LS.set("remFired", fired);
+}
+
+// 2-week .ics with per-day computed times (solar-only estimate for future days)
+function buildICS() {
+  const { lat, lng } = settings.loc;
+  const pad = n => String(n).padStart(2, "0");
+  const stamp = d => `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
+  const ev = (title, body, start, uid) => [
+    "BEGIN:VEVENT", "UID:" + uid + "@sol", "DTSTART:" + stamp(start),
+    "DTEND:" + stamp(new Date(start.getTime() + 15 * 6e4)),
+    "SUMMARY:" + title, "DESCRIPTION:" + body,
+    "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:" + title, "TRIGGER:-PT0M", "END:VALARM",
+    "END:VEVENT"
+  ];
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Sol//EN"];
+  for (let i = 0; i < 14; i++) {
+    const d = now(); d.setDate(d.getDate() + i); d.setHours(12, 0, 0, 0);
+    const st = sunTimes(lat, lng, d);
+    if (!st.sunrise) continue;
+    const dk = dayKey(d).replace(/-/g, "");
+    if (settings.reminders.morning) {
+      let start = st.sunrise;
+      if (settings.wake) {
+        const [h, m] = settings.wake.split(":").map(Number);
+        const w = new Date(d); w.setHours(h, m, 0, 0);
+        if (w > start) start = w;
+      }
+      lines.push(...ev("🌅 Morning light", REM_COPY.morning[1], start, "m" + dk));
+    }
+    if (settings.reminders.midday) {
+      // first time the sun clears 35 degrees (solar-only estimate)
+      let start = null;
+      for (let mm = 0; mm < 1440; mm += 15) {
+        const t = new Date(d); t.setHours(0, mm, 0, 0);
+        if (solarElevation(lat, lng, t) >= 35) { start = t; break; }
+      }
+      if (start) lines.push(...ev("🌞 Vitamin D window", REM_COPY.midday[1], start, "d" + dk));
+    }
+    if (settings.reminders.evening) {
+      let start;
+      if (settings.bed) {
+        const [h, m] = settings.bed.split(":").map(Number);
+        start = new Date(d); start.setHours(h, m, 0, 0);
+        start = new Date(start.getTime() - 2 * 36e5);
+      } else {
+        start = new Date(st.sunset.getTime() + 45 * 6e4);
+      }
+      lines.push(...ev("🌙 Wind-down", REM_COPY.evening[1], start, "e" + dk));
+    }
+  }
+  lines.push("END:VCALENDAR");
+  return lines.join("\r\n");
+}
+
+$("icsBtn").addEventListener("click", () => {
+  if (!settings.loc) { toast("Set a location first"); return; }
+  const blob = new Blob([buildICS()], { type: "text/calendar" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "sol-reminders.ics";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+  toast("Open the file to add to your calendar 📅");
+});
+
+/* ---------- check-in ---------- */
+$("checkinBtn").addEventListener("click", () => {
+  if (!currentMoment) return;
+  logMoment(currentMoment);
+  renderAll();
+  const count = MOMENTS.filter(k => todayMoments()[k]).length;
+  toast(count === 3 ? "All three moments today ☀️ Beautiful" :
+        currentMoment === "evening" ? "Sleep well 🌙" : "Logged ☀️ Nice");
+});
+
+/* ---------- toast ---------- */
+let toastTimer = null;
+function toast(msg) {
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 2600);
+}
+
+/* ---------- boot ---------- */
+(function boot() {
+  $("dateLine").textContent = now().toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" });
+  if (settings.loc) {
+    startWithLocation(settings.loc);
+  }
+  // refresh every minute (state), refetch weather every 30 min
+  setInterval(() => { if (settings.loc) renderAll(); }, 60e3);
+  setInterval(() => {
+    if (settings.loc && navigator.onLine) fetchWeather(settings.loc.lat, settings.loc.lng).then(renderAll).catch(() => {});
+  }, 30 * 60e3);
+})();
+</script>
+</body>
+</html>
