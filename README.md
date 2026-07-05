@@ -1,12 +1,12 @@
-# Sol · the right light at the right time
+# Soltide · the right light at the right time
 
-Your body runs on light. Sol tells you when to get it: one calm recommendation at a time, timed to the actual sun where you live.
+Your body runs on light. Soltide tells you when to get it: one calm recommendation at a time, timed to the actual sun where you live.
 
-**[Try it live](https://budhennekes.github.io/sol-circadian/)** · free, no account, works on your phone
+**[Try it live](https://budhennekes.github.io/soltide/)** · free, no account, works on your phone
 
 ## Why this exists
 
-Indoor light is too dim to wake your body up in the morning and too bright to let it wind down at night. So you feel groggy at 9 AM, wired at 11 PM, and confused about why. Sleep trackers tell you what happened last night. They don't tell you what to do about it at 7 this morning. Sol does: open it, read one line, step outside.
+Indoor light is too dim to wake your body up in the morning and too bright to let it wind down at night. So you feel groggy at 9 AM, wired at 11 PM, and confused about why. Sleep trackers tell you what happened last night. They don't tell you what to do about it at 7 this morning. Soltide does: open it, read one line, step outside.
 
 ## What it does
 
@@ -19,7 +19,7 @@ Indoor light is too dim to wake your body up in the morning and too bright to le
 
 ## Getting started
 
-Open **[budhennekes.github.io/sol-circadian](https://budhennekes.github.io/sol-circadian/)** on your phone. In Safari, tap Share, then **Add to Home Screen**. Sol opens full screen like a native app.
+Open **[budhennekes.github.io/soltide](https://budhennekes.github.io/soltide/)** on your phone. In Safari, tap Share, then **Add to Home Screen**. Soltide opens full screen like a native app.
 
 Personalize it in Settings: wake time and bedtime shift your light windows to match your real day.
 
@@ -29,4 +29,4 @@ One HTML file, no build step, no backend. Sun position is calculated on your dev
 
 ## Fine print
 
-Sol offers general wellness guidance based on sunlight, UV, weather, and time of day. It does not provide medical advice or diagnose or treat vitamin D deficiency.
+Soltide offers general wellness guidance based on sunlight, UV, weather, and time of day. It does not provide medical advice or diagnose or treat vitamin D deficiency.

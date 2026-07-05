@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-<title>Sol: your light, right now</title>
+<title>Soltide: your light, right now</title>
 <meta name="description" content="A calm daily guide to morning light, vitamin D, and winding down.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Sol">
+<meta name="apple-mobile-web-app-title" content="Soltide">
 <meta name="theme-color" content="#0b0e1a">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='14' fill='%23f5b64e'/%3E%3Ccircle cx='32' cy='32' r='22' fill='none' stroke='%23f5b64e' stroke-opacity='.35' stroke-width='3'/%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="icon.png">
-<link rel="manifest" href='data:application/manifest+json,{"name":"Sol","short_name":"Sol","display":"standalone","background_color":"%230b0e1a","theme_color":"%230b0e1a","start_url":"."}'>
+<link rel="manifest" href='data:application/manifest+json,{"name":"Soltide","short_name":"Soltide","display":"standalone","background_color":"%230b0e1a","theme_color":"%230b0e1a","start_url":"."}'>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
@@ -310,7 +310,7 @@
 
 <div class="app" id="app">
   <header>
-    <div class="wordmark">S<span>o</span>l</div>
+    <div class="wordmark">Sol<span>tide</span></div>
     <div class="head-right">
       <div class="date-line" id="dateLine"></div>
       <button class="gear" id="gearBtn" aria-label="Settings">⚙︎</button>
@@ -321,8 +321,8 @@
   <div class="card state-card" id="stateCard">
     <div class="ob-step" id="ob1">
       <span class="big-sun">☀️</span>
-      <h2>Meet Sol</h2>
-      <p>Your body runs on light. Sol is a calm guide that tells you one thing at a time:</p>
+      <h2>Meet Soltide</h2>
+      <p>Your body runs on light. Soltide is a calm guide that tells you one thing at a time:</p>
       <div class="ob-rows">
         <div class="ob-row"><span>🌅</span><div><b>Morning light</b><small>when to step outside to anchor your day</small></div></div>
         <div class="ob-row"><span>🌞</span><div><b>Vitamin D</b><small>when the sun is strong enough to count</small></div></div>
@@ -340,7 +340,7 @@
     <div class="ob-step hidden" id="ob3">
       <span class="big-sun">⏰</span>
       <h2>Your rhythm <small class="opt">(optional)</small></h2>
-      <p>Wake and bed times tune the light windows to your real day. Not sure? Skip it. Sol works fine without them.</p>
+      <p>Wake and bed times tune the light windows to your real day. Not sure? Skip it. Soltide works fine without them.</p>
       <div class="ob-times">
         <div class="field"><label>Wake time</label><input type="time" id="obWake"></div>
         <div class="field"><label>Bedtime</label><input type="time" id="obBed"></div>
@@ -421,7 +421,7 @@
 
   </div>
 
-  <footer>Sol offers general wellness guidance based on sunlight, UV, weather, and time of day. It does not provide medical advice or diagnose or treat vitamin D deficiency.</footer>
+  <footer>Soltide offers general wellness guidance based on sunlight, UV, weather, and time of day. It does not provide medical advice or diagnose or treat vitamin D deficiency.</footer>
 </div>
 
 <!-- settings -->
@@ -483,7 +483,7 @@
 "use strict";
 
 /* ============================================================
-   Sol — single-file circadian rhythm companion
+   Soltide — single-file circadian rhythm companion
    Data: Open-Meteo (weather/UV/geocoding). Solar math: local.
    Storage: localStorage only. No backend, no accounts.
    Debug: append ?sim=HH:MM (or full ISO) to simulate a time.
@@ -1102,7 +1102,7 @@ function updateRemUI() {
     note.textContent = Notification.permission === "denied"
       ? "Notifications are blocked in your browser settings."
       : anyReminderOn()
-        ? "Sol notifies you when a window opens while it's running. For alerts that always fire, add them to your calendar below."
+        ? "Soltide notifies you when a window opens while it's running. For alerts that always fire, add them to your calendar below."
         : "Up to three gentle nudges a day, never during sleep.";
   } else {
     note.textContent = anyReminderOn() ? "Tap below to add these to your calendar." : "";
@@ -1133,7 +1133,7 @@ function checkReminders(day) {
     if (!settings.reminders[m] || fired.types.includes(m) || !starts[m]) continue;
     const gap = t - starts[m];
     if (gap >= 0 && gap < 5 * 6e4) {
-      try { new Notification("Sol · " + REM_COPY[m][0], { body: REM_COPY[m][1], icon: "icon.png" }); } catch {}
+      try { new Notification("Soltide · " + REM_COPY[m][0], { body: REM_COPY[m][1], icon: "icon.png" }); } catch {}
       fired.types.push(m);
     }
   }
@@ -1146,13 +1146,13 @@ function buildICS() {
   const pad = n => String(n).padStart(2, "0");
   const stamp = d => `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}T${pad(d.getHours())}${pad(d.getMinutes())}00`;
   const ev = (title, body, start, uid) => [
-    "BEGIN:VEVENT", "UID:" + uid + "@sol", "DTSTART:" + stamp(start),
+    "BEGIN:VEVENT", "UID:" + uid + "@soltide", "DTSTART:" + stamp(start),
     "DTEND:" + stamp(new Date(start.getTime() + 15 * 6e4)),
     "SUMMARY:" + title, "DESCRIPTION:" + body,
     "BEGIN:VALARM", "ACTION:DISPLAY", "DESCRIPTION:" + title, "TRIGGER:-PT0M", "END:VALARM",
     "END:VEVENT"
   ];
-  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Sol//EN"];
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Soltide//EN"];
   for (let i = 0; i < 14; i++) {
     const d = now(); d.setDate(d.getDate() + i); d.setHours(12, 0, 0, 0);
     const st = sunTimes(lat, lng, d);
