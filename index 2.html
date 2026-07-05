@@ -128,36 +128,22 @@
     transition: transform .15s ease, box-shadow .3s ease, opacity .3s ease;
   }
   .checkin:active { transform: scale(.96); }
-  .checkin { display: block; margin-top: 16px; }
   .checkin.done {
     background: var(--accent-soft); color: var(--accent);
     box-shadow: none; cursor: default;
   }
-  /* journey (gentle, cumulative gamification) */
-  .journey {
-    display: flex; align-items: center; gap: 9px;
-    margin-top: 16px; padding-top: 15px;
-    border-top: 1px solid rgba(255,255,255,.08);
+  .streak-mini {
+    margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+    font-size: 12px; font-weight: 500; color: var(--ink-dim);
   }
-  .j-plant { font-size: 17px; line-height: 1; }
-  .j-label { font-size: 13px; font-weight: 500; color: var(--ink-dim); }
 
   /* ---------- sun arc / timeline ---------- */
   .arc-wrap { position: relative; margin: 4px 0 2px; }
   .arc-wrap svg { display: block; width: 100%; height: auto; }
   .arc-track { stroke: rgba(255,255,255,.1); }
   .arc-day { stroke: url(#arcGrad); }
-  /* prominent sunrise / sunset */
-  .sun-times { display: flex; justify-content: space-between; align-items: center; margin-top: -4px; padding: 0 4px; }
-  .st { display: flex; align-items: center; gap: 9px; }
-  .st.st-r { flex-direction: row; }
-  .st-ico { font-size: 15px; font-weight: 700; line-height: 1; }
-  .st-ico.rise { color: #ffd27a; }
-  .st-ico.set { color: #d3a0c0; }
-  .st-wrap { display: flex; flex-direction: column; line-height: 1.15; }
-  .st.st-r .st-wrap { text-align: right; }
-  .st-lab { font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
-  .st b { font-size: 18px; font-weight: 600; letter-spacing: -.01em; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .arc-times { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-faint); font-weight: 500; margin-top: -6px; padding: 0 6px; }
+  .arc-times b { display: block; color: var(--ink-dim); font-weight: 600; font-size: 12.5px; }
 
   .windows { display: flex; flex-direction: column; gap: 2px; margin-top: 16px; }
   .win {
@@ -172,48 +158,19 @@
   .win.past { opacity: .42; }
   .win.now .w-time { color: var(--accent); font-weight: 600; }
 
-  /* ---------- timeline header ---------- */
-  .tl-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-  .tl-head > span:first-child { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
-  .tl-count { font-size: 12.5px; font-weight: 600; color: var(--accent); }
-  .uv-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; transform: translateY(-1px); }
-  .w-done { color: var(--sun); margin-left: 7px; font-weight: 700; }
-
-  /* ---------- conditions (slim one-line) ---------- */
-  .conditions {
-    display: grid; grid-template-columns: 1fr 1fr 1fr;
+  /* ---------- context chips ---------- */
+  .chips { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  .chip {
     background: var(--card); border: 1px solid var(--card-border);
-    border-radius: var(--radius-md); overflow: hidden;
+    border-radius: var(--radius-md); padding: 13px 11px;
     backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
     opacity: 0; animation: rise .7s cubic-bezier(.22,.9,.3,1) forwards; animation-delay: .2s;
+    min-width: 0;
   }
-  .cond {
-    font-family: var(--sans); color: var(--ink); text-align: center;
-    padding: 13px 8px; background: none; border: none;
-    display: flex; flex-direction: column; gap: 3px; align-items: center; min-width: 0;
-    border-right: 1px solid var(--card-border);
-  }
-  .cond:last-child { border-right: none; }
-  button.cond { cursor: pointer; position: relative; }
-  button.cond::after { content: "i"; position: absolute; top: 7px; right: 8px; font-size: 8px; font-style: italic; font-weight: 700; color: var(--accent); opacity: .7; }
-  button.cond:active { background: rgba(255,255,255,.04); }
-  .cond-k { font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); }
-  .cond-v { font-size: 14.5px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-
-  /* ---------- education card ---------- */
-  .edu-card {
-    width: 100%; text-align: left; font-family: var(--sans); cursor: pointer;
-    background: linear-gradient(135deg, var(--accent-soft), rgba(255,255,255,.03));
-    border: 1px solid var(--card-border); border-radius: var(--radius-md);
-    padding: 16px 18px; color: var(--ink);
-    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
-    opacity: 0; animation: rise .7s cubic-bezier(.22,.9,.3,1) forwards; animation-delay: .28s;
-  }
-  .edu-card:active { transform: scale(.99); }
-  .edu-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-  .edu-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
-  .edu-arrow { font-size: 12px; font-weight: 600; color: var(--accent); }
-  .edu-tip { font-size: 14.5px; line-height: 1.45; color: var(--ink); font-weight: 500; }
+  .chip .c-label { font-size: 10.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 6px; }
+  .chip .c-value { font-size: 17px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chip .c-sub { font-size: 11px; color: var(--ink-dim); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -.01em; }
+  .uv-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; transform: translateY(-1px); }
 
   /* ---------- today's light moments ---------- */
   .moment-dots { display: flex; gap: 8px; }
@@ -286,7 +243,7 @@
     transform: translateY(105%); transition: transform .38s cubic-bezier(.3,.9,.3,1);
     max-height: 86vh; overflow-y: auto;
   }
-  .sheet.open { transform: none; }
+  body.sheet-open .sheet { transform: none; }
   body.sheet-open .sheet-veil { opacity: 1; pointer-events: auto; }
   .grabber { width: 38px; height: 4px; border-radius: 4px; background: rgba(255,255,255,.2); margin: 0 auto 18px; }
   .sheet h2 { font-family: var(--serif); font-weight: 400; font-size: 24px; margin-bottom: 18px; }
@@ -312,38 +269,6 @@
   }
   .sheet .save { width: 100%; margin-top: 6px; }
   .loc-note { font-size: 12.5px; color: var(--ink-faint); margin-top: 8px; line-height: 1.5; }
-
-  /* ---------- learn sheet (education) ---------- */
-  .sheet .sub-title { font-size: 13.5px; color: var(--ink-dim); margin: -8px 0 20px; line-height: 1.5; }
-  .acc { border-top: 1px solid rgba(255,255,255,.08); }
-  .acc-item { border-bottom: 1px solid rgba(255,255,255,.08); }
-  .acc-head {
-    width: 100%; display: flex; align-items: center; gap: 12px;
-    font-family: var(--sans); font-size: 15.5px; font-weight: 600; color: var(--ink);
-    background: none; border: none; padding: 16px 2px; cursor: pointer; text-align: left;
-  }
-  .acc-head .a-emoji { font-size: 18px; flex: none; }
-  .acc-head .a-chev { margin-left: auto; color: var(--ink-faint); font-size: 13px; transition: transform .3s ease; }
-  .acc-item.open .a-chev { transform: rotate(90deg); }
-  .acc-body { max-height: 0; overflow: hidden; transition: max-height .4s ease; }
-  .acc-item.open .acc-body { max-height: 1400px; }
-  .acc-body-inner { padding: 0 2px 20px; font-size: 14px; line-height: 1.62; color: var(--ink-dim); }
-  .acc-body-inner p { margin-bottom: 11px; }
-  .acc-body-inner p:last-child { margin-bottom: 0; }
-  .acc-body-inner strong { color: var(--ink); font-weight: 600; }
-  .acc-body-inner .fact {
-    background: var(--accent-soft); border-radius: 12px; padding: 12px 14px; margin: 4px 0 12px;
-    color: var(--ink); font-size: 13.5px; line-height: 1.5;
-  }
-  .acc-body-inner .fact b { color: var(--accent); }
-
-  /* UV scale */
-  .uv-scale { display: flex; flex-direction: column; gap: 5px; margin: 4px 0 12px; }
-  .uv-scale .uv-row { display: flex; align-items: center; gap: 10px; font-size: 13px; }
-  .uv-scale .uv-swatch { width: 34px; height: 18px; border-radius: 5px; flex: none; }
-  .uv-scale .uv-range { font-weight: 600; color: var(--ink); width: 42px; }
-  .uv-scale .uv-cat { color: var(--ink-dim); }
-  .disclaimer-mini { font-size: 11.5px; color: var(--ink-faint); line-height: 1.5; margin-top: 6px; font-style: italic; }
   .use-gps {
     width: 100%; font-family: var(--sans); font-size: 14px; font-weight: 500; color: var(--accent);
     background: var(--accent-soft); border: none; border-radius: 12px; padding: 12px; cursor: pointer; margin-bottom: 8px;
@@ -366,7 +291,7 @@
   /* ---------- accessibility ---------- */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-    .card, .conditions, .edu-card { opacity: 1; transform: none; }
+    .card, .chip { opacity: 1; transform: none; }
   }
 
   /* toast */
@@ -391,7 +316,6 @@
     <div class="wordmark">Sol<span>tide</span></div>
     <div class="head-right">
       <div class="date-line" id="dateLine"></div>
-      <button class="gear" id="learnBtn" aria-label="Learn">✳</button>
       <button class="gear" id="gearBtn" aria-label="Settings">⚙︎</button>
     </div>
   </header>
@@ -455,47 +379,48 @@
           </g>
         </svg>
       </div>
-      <div class="sun-times">
-        <div class="st"><span class="st-ico rise">↑</span><span class="st-wrap"><span class="st-lab">Sunrise</span><b id="tSunrise">—</b></span></div>
-        <div class="st st-r"><span class="st-wrap"><span class="st-lab">Sunset</span><b id="tSunset">—</b></span><span class="st-ico set">↓</span></div>
+      <div class="arc-times">
+        <div>Sunrise<b id="tSunrise">—</b></div>
+        <div style="text-align:right">Sunset<b id="tSunset">—</b></div>
       </div>
       <div class="hero-body">
         <h1 id="heroTitle">—</h1>
         <p id="heroSub">—</p>
         <div class="action" id="heroAction"></div>
-        <button class="checkin hidden" id="checkinBtn">I got outside ☀️</button>
-        <div class="journey" id="journeyLine">
-          <span class="j-plant" id="jPlant">🌱</span>
-          <span class="j-label" id="jLabel">Start your light journey</span>
+        <div class="action-row">
+          <button class="checkin hidden" id="checkinBtn">I got outside ☀️</button>
+          <div class="streak-mini">
+            <div class="moment-dots" id="momentDots">
+              <span data-m="morning" title="Morning light">🌅</span><span data-m="midday" title="Daylight">🌞</span><span data-m="evening" title="Wind-down">🌙</span>
+            </div>
+            <span id="streakLabel"></span>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="card" id="timelineCard">
-      <div class="tl-head"><span>Today's light</span><span class="tl-count" id="tlCount">0 of 3</span></div>
       <div class="windows" id="windows"></div>
       <div class="glance" id="glance"></div>
     </div>
 
-    <div class="conditions">
-      <button class="cond" data-topic="uv">
-        <span class="cond-k">UV</span>
-        <span class="cond-v" id="uvValue">—</span>
-      </button>
-      <div class="cond">
-        <span class="cond-k">Weather</span>
-        <span class="cond-v" id="wxValue">—</span>
+    <div class="chips">
+      <div class="chip">
+        <div class="c-label">UV index</div>
+        <div class="c-value" id="uvValue">—</div>
+        <div class="c-sub" id="uvSub">—</div>
       </div>
-      <button class="cond" data-topic="vitd">
-        <span class="cond-k">Vitamin D</span>
-        <span class="cond-v" id="vdValue">—</span>
-      </button>
+      <div class="chip">
+        <div class="c-label">Weather</div>
+        <div class="c-value" id="wxValue">—</div>
+        <div class="c-sub" id="wxSub">—</div>
+      </div>
+      <div class="chip">
+        <div class="c-label">Vitamin D</div>
+        <div class="c-value" id="vdValue">—</div>
+        <div class="c-sub" id="vdSub">—</div>
+      </div>
     </div>
-
-    <button class="edu-card" id="learnStrip">
-      <div class="edu-top"><span class="edu-eyebrow">✳ Light tip</span><span class="edu-arrow">Learn ›</span></div>
-      <div class="edu-tip" id="eduTip"></div>
-    </button>
 
   </div>
 
@@ -553,15 +478,6 @@
   </div>
 
   <button class="btn save" id="saveBtn">Done</button>
-</div>
-
-<!-- learn / education -->
-<div class="sheet" id="learnSheet" role="dialog" aria-label="Learn">
-  <div class="grabber"></div>
-  <h2>Why light matters</h2>
-  <p class="sub-title">Your body has an internal clock. Light is how you set it. A few plain-language basics, and the science underneath them.</p>
-  <div class="acc" id="learnAcc"></div>
-  <p class="disclaimer-mini">Soltide is general wellness education, not medical advice. It does not diagnose or treat any condition, including vitamin D deficiency. Talk to a clinician about supplements or blood levels.</p>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -951,68 +867,37 @@ function renderWindows(day) {
 function renderChips() {
   const uv = wx?.uvNow;
   const info = uvInfo(uv);
-  $("uvValue").innerHTML = uv == null ? "—"
-    : `<span class="uv-dot" style="background:${info.color}"></span>${Math.round(uv)} ${info.cat}`;
+  $("uvValue").innerHTML = uv == null ? "—" : `<span class="uv-dot" style="background:${info.color}"></span>${Math.round(uv * 10) / 10}`;
+  $("uvSub").textContent = uv == null ? "Unavailable" : info.cat;
+
   if (wx) {
-    const [label] = wxLabel(wx.code);
+    const [label, emoji] = wxLabel(wx.code);
     const temp = settings.units === "c" ? Math.round(wx.tempC) + "°" : Math.round(wx.tempF) + "°";
-    $("wxValue").textContent = `${temp} ${label}`;
+    $("wxValue").textContent = `${temp}`;
+    $("wxSub").textContent = `${emoji} ${label}`;
   } else {
     $("wxValue").textContent = "—";
+    $("wxSub").textContent = "Unavailable right now";
   }
 }
 
 function renderVitaminChip(day) {
   const { t, vd } = day;
-  if (!vd) { $("vdValue").textContent = "Unlikely"; return; }
-  if (t < vd.start) $("vdValue").textContent = "Later";
-  else if (t <= vd.end) $("vdValue").textContent = "Now";
-  else $("vdValue").textContent = "Passed";
+  if (!vd) { $("vdValue").textContent = "Unlikely"; $("vdSub").textContent = "Sun stays too low today"; return; }
+  if (t < vd.start) { $("vdValue").textContent = "Later"; $("vdSub").textContent = `Opens ${fmtTime(vd.start)}`; }
+  else if (t <= vd.end) { $("vdValue").textContent = "Now"; $("vdSub").textContent = `Until ${fmtTime(vd.end)}`; }
+  else { $("vdValue").textContent = "Passed"; $("vdSub").textContent = "Back tomorrow"; }
 }
 
-/* today's completion → timeline header count */
 function renderMoments() {
   const tm = todayMoments();
   const count = MOMENTS.filter(k => tm[k]).length;
-  $("tlCount").textContent = count === 3 ? "All 3 ✓" : `${count} of 3`;
-}
-
-/* gentle journey: cumulative days with any light logged; grows, never resets */
-function journeyInfo() {
-  const all = getMoments();
-  const days = Object.keys(all).filter(k => {
-    const m = all[k]; return m && (m.morning || m.midday || m.evening);
-  }).length;
-  let plant, label;
-  if (days === 0)       { plant = "🌱"; label = "Plant your first day of light"; }
-  else if (days === 1)  { plant = "🌱"; label = "Day 1. Your journey begins."; }
-  else if (days <= 6)   { plant = "🌱"; label = `${days} days in · finding your rhythm`; }
-  else if (days <= 13)  { plant = "🌿"; label = `${days} days of light · one week strong`; }
-  else if (days <= 29)  { plant = "🌿"; label = `${days} days · two weeks and growing`; }
-  else if (days <= 89)  { plant = "🌳"; label = `${days} days · a month of light`; }
-  else                  { plant = "🌳"; label = `${days} days · deeply rooted`; }
-  return { days, plant, label };
-}
-function renderJourney() {
-  const j = journeyInfo();
-  $("jPlant").textContent = j.plant;
-  $("jLabel").textContent = j.label;
-}
-
-/* rotating daily light tip (stable per day) */
-const TIPS = [
-  "A few minutes of bright outdoor light beats a long time in a dim room.",
-  "Cloudy morning? Still counts. Outdoors is far brighter than any room.",
-  "You can't see or feel UV. A cool, grey day can still carry plenty.",
-  "Your skin caps how much vitamin D it makes, so brief and regular wins.",
-  "Dimmer, warmer light at night helps sleep arrive on time.",
-  "In the morning, look toward the bright sky, never straight at the sun.",
-  "Light is the strongest signal your body clock uses to set itself.",
-  "Getting light at a steady time each day matters more than any single day."
-];
-function renderEduTip() {
-  const doy = Math.floor((now() - new Date(now().getFullYear(), 0, 0)) / 864e5);
-  $("eduTip").textContent = TIPS[doy % TIPS.length];
+  document.querySelectorAll("#momentDots span").forEach(el =>
+    el.classList.toggle("hit", !!tm[el.dataset.m]));
+  $("streakLabel").textContent =
+    count === 0 ? "Three light moments a day" :
+    count === 3 ? "A full light day" :
+    `${count} of 3 today`;
 }
 
 function renderAll() {
@@ -1060,8 +945,6 @@ function renderAll() {
   renderChips();
   renderVitaminChip(day);
   renderMoments();
-  renderJourney();
-  renderEduTip();
   checkReminders(day);
 }
 let currentMoment = null;
@@ -1168,14 +1051,9 @@ function openSheet() {
   $("unitSeg").querySelectorAll("button").forEach(b => b.classList.toggle("on", b.dataset.v === settings.units));
   $("locNote").textContent = settings.loc ? `Currently: ${settings.loc.name || settings.loc.lat + ", " + settings.loc.lng}` : "No location set yet.";
   updateRemUI();
-  $("sheet").classList.add("open");
   document.body.classList.add("sheet-open");
 }
-function closeSheet() {
-  document.body.classList.remove("sheet-open");
-  $("sheet").classList.remove("open");
-  $("learnSheet").classList.remove("open");
-}
+function closeSheet() { document.body.classList.remove("sheet-open"); }
 
 $("gearBtn").addEventListener("click", openSheet);
 $("veil").addEventListener("click", closeSheet);
@@ -1337,94 +1215,6 @@ $("checkinBtn").addEventListener("click", () => {
   toast(count === 3 ? "All three moments today ☀️ Beautiful" :
         currentMoment === "evening" ? "Sleep well 🌙" : "Logged ☀️ Nice");
 });
-
-/* ---------- learn / education ----------
-   Original microcopy synthesized from primary circadian/photobiology research
-   (see docs/science-notes.md). Mechanisms stated plainly; rule-of-thumb numbers
-   hedged; no medical dosing claims. */
-const uvScaleHTML = `
-  <div class="uv-scale">
-    <div class="uv-row"><span class="uv-swatch" style="background:#7ed491"></span><span class="uv-range">0–2</span><span class="uv-cat">Low</span></div>
-    <div class="uv-row"><span class="uv-swatch" style="background:#f2d066"></span><span class="uv-range">3–5</span><span class="uv-cat">Moderate</span></div>
-    <div class="uv-row"><span class="uv-swatch" style="background:#f2a25c"></span><span class="uv-range">6–7</span><span class="uv-cat">High</span></div>
-    <div class="uv-row"><span class="uv-swatch" style="background:#ef7070"></span><span class="uv-range">8–10</span><span class="uv-cat">Very high</span></div>
-    <div class="uv-row"><span class="uv-swatch" style="background:#c77dde"></span><span class="uv-range">11+</span><span class="uv-cat">Extreme</span></div>
-  </div>`;
-
-const LEARN = [
-  {
-    id: "circadian", emoji: "🕰", title: "Your body clock",
-    body: `
-      <p>Deep in your brain, a cluster of cells called the suprachiasmatic nucleus keeps a roughly 24-hour rhythm running: when you feel alert, when you get sleepy, when hormones rise and fall. It runs slightly off from the clock on the wall, so it needs to be reset every day.</p>
-      <p><strong>Light is the reset button.</strong> Of all the cues your body uses, light is by far the strongest. That is the whole idea behind Soltide: get the right light at the right time, and the rest of your rhythm falls into line.</p>
-      <div class="fact">Left in constant dim light, the human clock free-runs at about <b>24 hours and 11 minutes</b> on average. Daily light nudges it back to 24, which is why a consistent routine beats a perfect one.</div>
-      <p>Two things matter most: <strong>light in the morning</strong> and <strong>darkness at night</strong>. Keeping their timing steady matters more than nailing any single day.</p>`
-  },
-  {
-    id: "morning", emoji: "🌅", title: "Morning light",
-    body: `
-      <p>Getting bright light into your eyes not long after waking sets your clock earlier, which helps you feel alert in the day and sleepy at a reasonable hour that night. It also gives your natural morning cortisol bump a nudge, the healthy kind that helps you wake up.</p>
-      <p><strong>Brightness does the heavy lifting.</strong> A few minutes of bright outdoor light beats a long stretch in a dim room, because the outdoors is far brighter than it looks.</p>
-      <div class="fact">A bright office is around <b>500 lux</b>. An overcast morning outside is <b>10,000+ lux</b>. Direct sun can top <b>100,000</b>. Your eyes compress that range, so indoors always feels "bright enough" when it isn't.</div>
-      <p>Rough guide: on a clear day a few minutes may be plenty; overcast, give it longer. Cloudy still counts. One safety note that isn't rough at all: look toward the bright sky, never straight at the sun.</p>`
-  },
-  {
-    id: "uv", emoji: "🎚", title: "The UV index",
-    body: `
-      <p>The UV index rates how strong the sun's skin-affecting ultraviolet is right now, on a scale from 0 up past 11. It was set by the WHO and health agencies, and the colors are a standard signal:</p>
-      ${uvScaleHTML}
-      <p>Protection is generally worth it from <strong>3 and up</strong>. UV is strongest in the middle of the day and near zero early and late, even when it still looks bright out.</p>
-      <div class="fact">You can't see or feel UV. A cool, overcast day can still carry real UV, and thin cloud sometimes lets through <b>more</b> than clear sky. Snow reflects up to <b>~80%</b> back at you. Bright and hot are not the same as high UV.</div>
-      <p>Quick check with no app: if your shadow is shorter than you are, the sun is high and UV is near its strongest.</p>`
-  },
-  {
-    id: "vitd", emoji: "🌞", title: "Vitamin D from sun",
-    body: `
-      <p>Your skin makes vitamin D when a specific slice of ultraviolet, called UV-B, reaches it. UV-B only gets through when the sun is high enough in the sky, so the window is the middle of the day, not the golden edges.</p>
-      <p>When the sun sits low, sunlight cuts through far more atmosphere and the ozone layer filters that UV-B out. So on a practical level, Soltide treats vitamin D as likely when the sun is high and the UV index is meaningful.</p>
-      <div class="fact"><b>Vitamin D winter:</b> above roughly 35° latitude, the winter sun never climbs high enough for much UV-B. Boston makes little from about November to February, regardless of how long you're out.</div>
-      <p><strong>More is not better.</strong> Your skin caps how much it makes in one session, then starts breaking the excess back down, which is why brief and regular beats long and burnt. Darker skin has more natural sun protection and generally needs a bit more time; how much varies a lot from person to person.</p>
-      <p class="disclaimer-mini">This is general education about sunlight, not a measure of your vitamin D level or a dosing recommendation. For blood levels or supplements, talk to a clinician.</p>`
-  },
-  {
-    id: "evening", emoji: "🌙", title: "Evening and sleep",
-    body: `
-      <p>At night the same light that helps you in the morning works against you. Bright light after sunset tells your clock the day isn't over, pushing it later and holding back melatonin, the hormone that lets sleep come on.</p>
-      <p><strong>Dimmer and warmer is the move.</strong> Blue-rich light suppresses melatonin the most, so lower the lights and soften the color in the last hour or two before bed.</p>
-      <div class="fact">Ordinary room light before bed can cut melatonin by around <b>half</b> for most people. And sensitivity varies wildly, over <b>50-fold</b> between individuals, so there's no single "safe" brightness. When in doubt, go dimmer.</div>
-      <p>The most reliable evening move isn't a gadget or a screen filter, it's simply less light. Catching some low evening sun around sunset is a gentle bonus that helps signal the day is ending.</p>`
-  }
-];
-
-function renderLearn() {
-  $("learnAcc").innerHTML = LEARN.map(t => `
-    <div class="acc-item" data-id="${t.id}">
-      <button class="acc-head"><span class="a-emoji">${t.emoji}</span><span>${t.title}</span><span class="a-chev">›</span></button>
-      <div class="acc-body"><div class="acc-body-inner">${t.body}</div></div>
-    </div>`).join("");
-  $("learnAcc").querySelectorAll(".acc-head").forEach(h => h.addEventListener("click", () => {
-    h.parentElement.classList.toggle("open");
-  }));
-}
-renderLearn();
-
-function openLearn(expandId) {
-  $("learnAcc").querySelectorAll(".acc-item").forEach(el =>
-    el.classList.toggle("open", el.dataset.id === expandId));
-  $("learnSheet").classList.add("open");
-  document.body.classList.add("sheet-open");
-  if (expandId) {
-    const el = $("learnAcc").querySelector(`.acc-item[data-id="${expandId}"]`);
-    if (el) setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
-    else $("learnSheet").scrollTop = 0;
-  } else {
-    $("learnSheet").scrollTop = 0;
-  }
-}
-$("learnBtn").addEventListener("click", () => openLearn(null));
-$("learnStrip").addEventListener("click", () => openLearn(null));
-document.querySelectorAll("button.cond[data-topic]").forEach(c =>
-  c.addEventListener("click", () => openLearn(c.dataset.topic)));
 
 /* ---------- toast ---------- */
 let toastTimer = null;

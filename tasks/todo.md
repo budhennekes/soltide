@@ -124,3 +124,14 @@ Deferred (by design): push notifications (need a server or native wrapper on iPh
 - Verified: all themes, learn sheet open/close/accordion, chip taps, zero console errors.
 
 Research method note: ran a parallel research sweep across morning light, evening/phase-delay, melatonin suppression, UV index, vitamin D photobiology, vitamin D winter, skin type, and circadian fundamentals. Every load-bearing number is primary-sourced with a confidence rating in docs/science-notes.md.
+
+## Round 9 (2026-07-05, simplify + journey pass)
+
+Feedback: still a bit overwhelming; make AM/PM sunrise/sunset prominent; gamify as a journey (not overnight); highlight education; UI/UX best practices. Web-vs-app split deferred to a later dedicated pass.
+
+- Removed redundancy (root cause of overwhelm): the three daily moments were shown twice (hero dots + timeline checkmarks). Cut the hero dots; the timeline is now the single "Today's light · N of 3" tracker.
+- Sunrise/sunset promoted from tiny labels to a prominent pair with ↑/↓ arrows and large bold times, colored by dawn/dusk.
+- Journey gamification: a growing-plant line (🌱→🌿→🌳) tied to cumulative light-days with forgiving milestones ("5 days in · finding your rhythm" → "one week strong" → "a month of light"). Grows over time, never resets, no guilt. Sits as one slim line at the base of the hero.
+- Collapsed the three big data chips into one slim conditions row (UV · Weather · Vit D); UV and Vit D still tappable into the Learn sheet via a subtle "i".
+- Education elevated: the thin link strip became a proper accented card showing a rotating daily light tip (stable per day) with a Learn entry point.
+- Verified: all states/themes, check-in updates count + timeline ✓ + journey together, conditions tap opens Learn, zero console errors.
