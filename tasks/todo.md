@@ -105,3 +105,10 @@ Deferred (by design): push notifications (need a server or native wrapper on iPh
 - iPhone path (honest, serverless): "Add reminders to my calendar" generates a 2-week .ics with per-day computed times (sunrise/wake-based mornings, sun-elevation vitamin D, bedtime-based wind-down) with display alarms. Validated: 28 events for 2 toggles, correct times, valid VCALENDAR.
 - Polish: prefers-reduced-motion support (animations off for users who ask), gear tap target enlarged to ~44px, aria-pressed/labels on toggles.
 - Verified toggles persist, note text adapts to platform/permission state, sheet flow intact, zero console errors.
+
+## Round 7 (2026-07-04, rebrand)
+
+- Renamed Sol to Soltide everywhere: app title, PWA name, wordmark (accent-colored "tide"), onboarding, disclaimer, notification titles, calendar export IDs, README, landing copy doc.
+- Repo renamed to budhennekes/soltide; live URL is now https://budhennekes.github.io/soltide/ (old Pages URL 404s; old repo URL redirects).
+- localStorage keys keep the sol_ prefix on purpose so nobody loses settings or check-ins.
+- Verified: new URL serves the rebranded build, wordmark renders correctly at mobile width.
