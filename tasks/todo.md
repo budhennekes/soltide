@@ -112,3 +112,15 @@ Deferred (by design): push notifications (need a server or native wrapper on iPh
 - Repo renamed to budhennekes/soltide; live URL is now https://budhennekes.github.io/soltide/ (old Pages URL 404s; old repo URL redirects).
 - localStorage keys keep the sol_ prefix on purpose so nobody loses settings or check-ins.
 - Verified: new URL serves the rebranded build, wordmark renders correctly at mobile width.
+
+## Round 8 (2026-07-04, colors + education layer)
+
+- Recolored all six time-of-day themes: each is now a distinct, richer sky (pre-dawn indigo, peach dawn, clear blue morning, luminous midday, amber golden hour, violet dusk, deep night) with a three-stop gradient. Cards switched to dark-tinted glass so they hold definition on both bright and dark skies.
+- Added an education layer (progressive disclosure, keeps the glance view calm):
+  - Tappable UV and Vit D chips (with an "i" badge) open a Learn sheet expanded to that topic.
+  - A "Why light matters" strip and a header ✳ icon open the full Learn sheet.
+  - Learn sheet = accordion of 5 topics: Your body clock, Morning light, The UV index (with the official WHO color scale), Vitamin D from sun, Evening and sleep. Each has plain-language guidance + a highlighted "fact" with real numbers.
+- All education copy is original, synthesized from primary circadian/photobiology research (Huberman, WHO/EPA UV, Holick vitamin D, Zeitzer/Phillips melatonin, Czeisler PRC). Numbers hedged per confidence; no medical dosing claims; disclaimer in the sheet. Sources captured in docs/science-notes.md.
+- Verified: all themes, learn sheet open/close/accordion, chip taps, zero console errors.
+
+Research method note: ran a parallel research sweep across morning light, evening/phase-delay, melatonin suppression, UV index, vitamin D photobiology, vitamin D winter, skin type, and circadian fundamentals. Every load-bearing number is primary-sourced with a confidence rating in docs/science-notes.md.
