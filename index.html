@@ -145,6 +145,14 @@
   /* ---------- sun arc / timeline ---------- */
   .arc-wrap { position: relative; margin: 4px 0 2px; }
   .arc-wrap svg { display: block; width: 100%; height: auto; }
+  /* live sun countdown, centered in the arc's empty interior */
+  .arc-timer {
+    position: absolute; left: 0; right: 0; top: 52%; transform: translateY(-50%);
+    text-align: center; pointer-events: none;
+  }
+  .at-label { font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 3px; }
+  .at-value { font-family: var(--serif); font-weight: 400; font-size: 30px; letter-spacing: .01em; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1; }
+  .at-value.ticking { color: var(--accent); }
   .arc-track { stroke: rgba(255,255,255,.1); }
   .arc-day { stroke: url(#arcGrad); }
   /* prominent sunrise / sunset */
@@ -454,6 +462,10 @@
             <circle r="5.5" fill="#c9d2ff" opacity=".9"/>
           </g>
         </svg>
+        <div class="arc-timer" id="arcTimer">
+          <div class="at-label" id="atLabel">—</div>
+          <div class="at-value" id="atValue">—</div>
+        </div>
       </div>
       <div class="sun-times">
         <div class="st"><span class="st-ico rise">↑</span><span class="st-wrap"><span class="st-lab">Sunrise</span><b id="tSunrise">—</b></span></div>
@@ -1020,6 +1032,7 @@ function renderAll() {
   const { lat, lng } = settings.loc;
   const day = computeDay(lat, lng);
   day.lat = lat; day.lng = lng;
+  lastDay = day;
   const state = pickState(day);
 
   // header date + location
@@ -1062,9 +1075,48 @@ function renderAll() {
   renderMoments();
   renderJourney();
   renderEduTip();
+  renderTimer();
   checkReminders(day);
 }
 let currentMoment = null;
+let lastDay = null;
+
+/* ---------- live sun countdown ----------
+   Counts to the next sun event: daylight-left to sunset, or time to next
+   sunrise at night. Calm "Xh Ym" when far off; ticks to M:SS in the final
+   hour, when a countdown actually nudges you to catch the light. */
+function fmtCountdown(ms) {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+  if (h > 0) return { text: `${h}h ${m}m`, ticking: false };
+  return { text: `${m}:${String(sec).padStart(2, "0")}`, ticking: true };
+}
+function renderTimer() {
+  const day = lastDay;
+  const val = $("atValue"), lab = $("atLabel");
+  if (!day || !day.sunrise || !day.sunset) {
+    lab.textContent = day && day.polar === "day" ? "Midnight sun" : day && day.polar === "night" ? "Polar night" : "";
+    val.textContent = day && day.polar ? "—" : "";
+    val.classList.remove("ticking");
+    return;
+  }
+  const t = now();
+  let target, label;
+  if (t >= day.sunrise && t < day.sunset) {
+    target = day.sunset; label = "Daylight left";
+  } else {
+    let nr = day.sunrise;
+    if (t >= day.sunset) {
+      const tm = new Date(t); tm.setDate(tm.getDate() + 1);
+      nr = sunTimes(day.lat, day.lng, tm).sunrise || day.sunrise;
+    }
+    target = nr; label = "Until sunrise";
+  }
+  const { text, ticking } = fmtCountdown(target - t);
+  lab.textContent = label;
+  val.textContent = text;
+  val.classList.toggle("ticking", ticking);
+}
 
 /* ---------- boot / location flow ---------- */
 let onboarding = !settings.loc && !LS.get("onboarded", false);
@@ -1442,8 +1494,11 @@ function toast(msg) {
   if (settings.loc) {
     startWithLocation(settings.loc);
   }
-  // refresh every minute (state), refetch weather every 30 min
+  // tick the sun countdown every second; full re-render each minute; weather every 30 min
+  setInterval(() => { if (settings.loc && lastDay && !document.hidden) renderTimer(); }, 1e3);
   setInterval(() => { if (settings.loc) renderAll(); }, 60e3);
+  // resync immediately when the user returns to the app
+  document.addEventListener("visibilitychange", () => { if (!document.hidden && settings.loc) renderAll(); });
   setInterval(() => {
     if (settings.loc && navigator.onLine) fetchWeather(settings.loc.lat, settings.loc.lng).then(renderAll).catch(() => {});
   }, 30 * 60e3);

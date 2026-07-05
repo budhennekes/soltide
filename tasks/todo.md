@@ -135,3 +135,11 @@ Feedback: still a bit overwhelming; make AM/PM sunrise/sunset prominent; gamify 
 - Collapsed the three big data chips into one slim conditions row (UV · Weather · Vit D); UV and Vit D still tappable into the Learn sheet via a subtle "i".
 - Education elevated: the thin link strip became a proper accented card showing a rotating daily light tip (stable per day) with a Learn entry point.
 - Verified: all states/themes, check-in updates count + timeline ✓ + journey together, conditions tap opens Learn, zero console errors.
+
+## Round 10 (2026-07-05, live sun timer)
+
+- Added a live countdown in the arc's empty center (turns the arc into a sun clock, no new card, no added clutter).
+- Daytime: "Daylight left · Xh Ym" counting to sunset. Night: "Until sunrise · Xh Ym".
+- Adaptive: calm "Xh Ym" when far off; ticks to accent-colored "M:SS" in the final hour, when a countdown actually nudges you to catch the light (golden hour) or expect first light.
+- Battery/best-practice: 1s tick pauses when the tab is hidden; full resync on visibilitychange when the user returns.
+- Verified midday (6h 37m), golden hour (live 27:15→27:12 ticking), night (7h 9m), zero console errors.
