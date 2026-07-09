@@ -73,6 +73,31 @@
     padding: calc(env(safe-area-inset-top, 0px) + 20px) 20px calc(env(safe-area-inset-bottom, 0px) + 28px);
     display: flex; flex-direction: column; gap: 14px;
   }
+  #main { display: flex; flex-direction: column; gap: 14px; }
+  .side { display: flex; flex-direction: column; gap: 14px; }
+
+  /* ---------- desktop / web layout ---------- */
+  @media (min-width: 880px) {
+    .app { max-width: 1080px; padding: 44px 44px calc(env(safe-area-inset-bottom, 0px) + 44px); gap: 22px; }
+    header { padding: 4px 6px 10px; }
+    .wordmark { font-size: 26px; }
+    .date-line { font-size: 14px; }
+    #main { display: grid; grid-template-columns: 1.3fr 0.86fr; gap: 24px; align-items: start; }
+    .hero { grid-column: 1; padding: 36px 40px 30px; }
+    .side { grid-column: 2; gap: 18px; }
+    .hero .arc-wrap { max-width: 440px; margin: 8px auto 0; }
+    .hero .sun-times { max-width: 440px; margin: -2px auto 0; }
+    .hero h1 { font-size: 42px; margin-top: 2px; }
+    .hero p { font-size: 15.5px; max-width: 48ch; }
+    .at-value { font-size: 34px; }
+    .hero-body { margin-top: 20px; }
+    .state-card { max-width: 540px; margin: 0 auto; }
+    footer { max-width: 760px; margin: 0 auto; }
+    .card, .conditions, .edu-card { animation: none; opacity: 1; transform: none; }
+  }
+  @media (min-width: 880px) and (prefers-reduced-motion: no-preference) {
+    .app > * { animation: rise .7s cubic-bezier(.22,.9,.3,1) both; }
+  }
 
   /* ---------- header ---------- */
   header { display: flex; align-items: baseline; justify-content: space-between; padding: 2px 4px 4px; }
@@ -439,7 +464,7 @@
   </div>
 
   <!-- main UI -->
-  <div id="main" class="hidden" style="display:contents">
+  <div id="main" class="hidden">
     <div class="card hero" id="heroCard">
       <div class="hero-state"><span class="dot"></span><span id="heroState">—</span></div>
       <div class="arc-wrap">
@@ -483,31 +508,33 @@
       </div>
     </div>
 
-    <div class="card" id="timelineCard">
-      <div class="tl-head"><span>Today's light</span><span class="tl-count" id="tlCount">0 of 3</span></div>
-      <div class="windows" id="windows"></div>
-      <div class="glance" id="glance"></div>
-    </div>
-
-    <div class="conditions">
-      <button class="cond" data-topic="uv">
-        <span class="cond-k">UV</span>
-        <span class="cond-v" id="uvValue">—</span>
-      </button>
-      <div class="cond">
-        <span class="cond-k">Weather</span>
-        <span class="cond-v" id="wxValue">—</span>
+    <div class="side">
+      <div class="card" id="timelineCard">
+        <div class="tl-head"><span>Today's light</span><span class="tl-count" id="tlCount">0 of 3</span></div>
+        <div class="windows" id="windows"></div>
+        <div class="glance" id="glance"></div>
       </div>
-      <button class="cond" data-topic="vitd">
-        <span class="cond-k">Vitamin D</span>
-        <span class="cond-v" id="vdValue">—</span>
+
+      <div class="conditions">
+        <button class="cond" data-topic="uv">
+          <span class="cond-k">UV</span>
+          <span class="cond-v" id="uvValue">—</span>
+        </button>
+        <div class="cond">
+          <span class="cond-k">Weather</span>
+          <span class="cond-v" id="wxValue">—</span>
+        </div>
+        <button class="cond" data-topic="vitd">
+          <span class="cond-k">Vitamin D</span>
+          <span class="cond-v" id="vdValue">—</span>
+        </button>
+      </div>
+
+      <button class="edu-card" id="learnStrip">
+        <div class="edu-top"><span class="edu-eyebrow">✳ Light tip</span><span class="edu-arrow">Learn ›</span></div>
+        <div class="edu-tip" id="eduTip"></div>
       </button>
     </div>
-
-    <button class="edu-card" id="learnStrip">
-      <div class="edu-top"><span class="edu-eyebrow">✳ Light tip</span><span class="edu-arrow">Learn ›</span></div>
-      <div class="edu-tip" id="eduTip"></div>
-    </button>
 
   </div>
 
@@ -1445,6 +1472,14 @@ const LEARN = [
       <p><strong>Dimmer and warmer is the move.</strong> Blue-rich light suppresses melatonin the most, so lower the lights and soften the color in the last hour or two before bed.</p>
       <div class="fact">Ordinary room light before bed can cut melatonin by around <b>half</b> for most people. And sensitivity varies wildly, over <b>50-fold</b> between individuals, so there's no single "safe" brightness. When in doubt, go dimmer.</div>
       <p>The most reliable evening move isn't a gadget or a screen filter, it's simply less light. Catching some low evening sun around sunset is a gentle bonus that helps signal the day is ending.</p>`
+  },
+  {
+    id: "meals", emoji: "🍽", title: "Meals and your clock",
+    body: `
+      <p>Light sets the master clock in your brain, but it isn't the only cue your body reads. When you eat helps set the clocks in your gut and liver, the ones that handle digestion and blood sugar.</p>
+      <p><strong>Regular beats perfect here too.</strong> Eating around the same times each day, and giving your body a longer overnight break from food, tends to keep those clocks in step with your light-driven rhythm.</p>
+      <div class="fact">A large late meal close to bedtime asks your body to digest when it's trying to wind down. Front-loading more of your food earlier in the day generally sits better with your rhythm.</div>
+      <p>Soltide keeps the home screen focused on light because light is the strongest lever. Think of meal timing as a supporting habit: steady mealtimes, lighter and earlier in the evening.</p>`
   }
 ];
 

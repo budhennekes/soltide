@@ -143,3 +143,20 @@ Feedback: still a bit overwhelming; make AM/PM sunrise/sunset prominent; gamify 
 - Adaptive: calm "Xh Ym" when far off; ticks to accent-colored "M:SS" in the final hour, when a countdown actually nudges you to catch the light (golden hour) or expect first light.
 - Battery/best-practice: 1s tick pauses when the tab is hidden; full resync on visibilitychange when the user returns.
 - Verified midday (6h 37m), golden hour (live 27:15→27:12 ticking), night (7h 9m), zero console errors.
+
+## Round 11 (2026-07-09, web-vs-mobile split + strategy)
+
+Decisions locked with Bud:
+- App Store path: WRAP the PWA (PWABuilder/Capacitor) + add NATIVE push (sun reminders) — the native capability is what earns Apple approval past guideline 4.2. ~$99/yr dev account. Keeps one codebase.
+- Pricing: SUBSCRIPTION, premium-positioned to filter casuals. Recommended ladder = 7-day free trial → $59.99/yr hero (~$5/mo) + $9.99/mo anchor + optional ~$99 lifetime. (Bud wanted higher price / "lose freeloaders"; trial does the filtering without tanking App Store conversion.)
+- Meal timing: EDUCATION ONLY. Added a "Meals and your clock" Learn card; home screen stays light-focused.
+
+Built this round:
+- Responsive web layout: at >=880px the app becomes a real 2-column dashboard (hero + big sun-clock on the left, Today's schedule / conditions / education stacked right, ~1080px max). Mobile <880px is unchanged single column. No longer a stretched phone.
+- Added the meal-timing education card (6 Learn topics now).
+- Verified desktop grid + mobile flex, meal card present, zero console errors.
+
+Next steps (not yet built):
+- Paywall UI + the pricing ladder; wire to StoreKit/RevenueCat when wrapping.
+- App Store wrapper (PWABuilder or Capacitor) + native push notifications; App Store listing assets.
+- Deeper education + copy pass; possible dedicated marketing landing page (web) separate from the app.
