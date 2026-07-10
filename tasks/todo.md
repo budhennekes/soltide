@@ -177,3 +177,11 @@ Clarification: "timer" = a literal stopwatch for time spent in the sun, not the 
 - Logged minutes show on the timeline row ("Morning light ✓ · 18 min") and the daily total in the stats line ("22 min of sun today").
 - The daylight-left / until-sunrise countdown still shows in the arc when no session is running; the stopwatch takes over the same spot when active.
 - Verified full flow (start → count up → stop → log), timeline + glance update, zero console errors.
+
+## Round 13 (2026-07-10, evergreen sun button + discoverable Learn)
+
+Feedback: want ONE evergreen start/stop sun-time button (was too complicated: contextual labels, disabled after logging, couldn't re-log when going back out); simplify overall; make education more discoverable (not a cryptic corner glyph).
+- Replaced the contextual per-moment button with a single evergreen "Start sun time ☀️ / Stop & log ■". Always available while the sun is up, never disabled, fully repeatable — every session adds to today's total.
+- Dropped the 3-moment check-in complexity. Tracking is now one number: today's total sun minutes (shown in the "Today's light" header). Morning-light + vitamin-D windows stay as guidance and auto-✓ (with minutes) when a session lands in them; no taps required. Evening is guidance only (no button).
+- Education: header "✳" glyph → a labeled "✳ Learn" pill (discoverable). Removed duplicate sun-total from the glance line.
+- Verified: start → live count-up → stop logs + returns to Start (repeatable), second session accumulates, window auto-checks, Learn pill opens the sheet, zero console errors.
