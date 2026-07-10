@@ -168,3 +168,12 @@ Feedback: not a fan of purple; crowded/overwhelming again; gear toward insight +
 - Hero decluttered to pure insight+action: removed the explanatory sub-paragraph AND the journey line ("Day 1 begins"). Hero is now state pill → arc+timer → sunrise/sunset → title → best-time → check-in.
 - Sun timer elevated to the hero's focal point: value 30px→40px (46px desktop), bolder label. It's now the dominant element.
 - Verified morning + evening states, check-in updates count, zero console errors.
+
+## Round 12 (2026-07-09, literal sun-time stopwatch)
+
+Clarification: "timer" = a literal stopwatch for time spent in the sun, not the daylight countdown.
+- Added a real sun-session stopwatch. Sun moments (morning, vitamin D) now: button "Start sun time" → the arc center becomes a live count-up ("SUN TIME · GOAL 20 MIN / 3:24" in gold) → "Stop & log" records the minutes, marks the moment done, adds to today's total.
+- Wall-clock based (Date.now()), survives reload/backgrounding via sol_session {start, moment}. Evening moment stays a simple "I'm winding down" tap (not a sun session).
+- Logged minutes show on the timeline row ("Morning light ✓ · 18 min") and the daily total in the stats line ("22 min of sun today").
+- The daylight-left / until-sunrise countdown still shows in the arc when no session is running; the stopwatch takes over the same spot when active.
+- Verified full flow (start → count up → stop → log), timeline + glance update, zero console errors.

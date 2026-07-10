@@ -724,18 +724,39 @@ const settings = {
    morning = morning light, midday = daylight/vitamin D, evening = wind-down.
    Days reset on their own; no chains, no guilt. */
 const MOMENTS = ["morning", "midday", "evening"];
-const MOMENT_LABELS = {
-  morning: ["I got my morning light ☀️", "Morning light ✓"],
-  midday:  ["I got some daylight ☀️", "Daylight ✓"],
-  evening: ["I'm winding down 🌙", "Winding down ✓"]
+// sun moments use the stopwatch; evening is a simple tap. [start-label, done-label], goal minutes
+const MOMENT_META = {
+  morning: { sun: true,  goal: 20, done: "Morning light ✓", tap: "Start sun time ☀️" },
+  midday:  { sun: true,  goal: 15, done: "Daylight ✓",      tap: "Start sun time ☀️" },
+  evening: { sun: false, goal: 0,  done: "Winding down ✓",  tap: "I'm winding down 🌙" }
 };
 function getMoments() { return LS.get("moments", {}); }
 function todayMoments() { return getMoments()[dayKey(now())] || {}; }
-function logMoment(m) {
+function logMoment(m, minutes) {
   const all = getMoments();
   const k = dayKey(now());
   all[k] = { ...(all[k] || {}), [m]: true };
   LS.set("moments", all);
+  if (minutes != null) {
+    const mins = LS.get("sunmin", {});
+    mins[k] = { ...(mins[k] || {}), [m]: minutes };
+    LS.set("sunmin", mins);
+  }
+}
+function todaySunMin() { return (LS.get("sunmin", {})[dayKey(now())]) || {}; }
+function todaySunTotal() { const s = todaySunMin(); return MOMENTS.reduce((a, m) => a + (s[m] || 0), 0); }
+
+/* ---------- sun-time stopwatch (real wall-clock, survives reload) ---------- */
+function getSession() { return LS.get("session", null); }        // { start: ms, moment }
+function startSession(moment) { LS.set("session", { start: Date.now(), moment }); }
+function clearSession() { try { localStorage.removeItem("sol_session"); } catch {} }
+function sessionElapsedMs() { const s = getSession(); return s ? Date.now() - s.start : 0; }
+function stopSession() {
+  const s = getSession(); if (!s) return 0;
+  const mins = Math.max(1, Math.round(sessionElapsedMs() / 60000));
+  logMoment(s.moment, mins);
+  clearSession();
+  return mins;
 }
 // migrate the old single-tap checkins (each counted as a morning)
 (function migrateCheckins() {
@@ -966,10 +987,10 @@ function renderArc(day) {
 
 function renderWindows(day) {
   const { t, sunrise, sunset, vd, mlStart, mlEnd, dimStart } = day;
-  const tm = todayMoments();
+  const tm = todayMoments(), sm = todaySunMin();
   const rows = [];
-  if (sunrise) rows.push({ icon: "🌅", name: "Morning light", start: mlStart, end: mlEnd, time: fmtRange(mlStart, mlEnd), done: tm.morning });
-  if (vd) rows.push({ icon: "🌞", name: "Vitamin D", start: vd.start, end: vd.end, time: fmtRange(vd.start, vd.end), done: tm.midday });
+  if (sunrise) rows.push({ icon: "🌅", name: "Morning light", start: mlStart, end: mlEnd, time: fmtRange(mlStart, mlEnd), done: tm.morning, min: sm.morning });
+  if (vd) rows.push({ icon: "🌞", name: "Vitamin D", start: vd.start, end: vd.end, time: fmtRange(vd.start, vd.end), done: tm.midday, min: sm.midday });
   else rows.push({ icon: "🌞", name: "Vitamin D", start: null, end: null, time: "Not today", muted: true });
   if (dimStart) rows.push({ icon: "🌙", name: "Dim down", start: dimStart, end: null, time: `after ${fmtTime(dimStart)}`, done: tm.evening });
 
@@ -979,7 +1000,9 @@ function renderWindows(day) {
     else if (r.start && !r.end && t >= r.start) cls += " now";
     else if ((r.end && t > r.end) || r.muted) cls += " past";
     const done = r.done ? '<span class="w-done">✓</span>' : "";
-    return `<div class="${cls}"><span class="w-icon">${r.icon}</span><span class="w-name">${r.name}${done}</span><span class="w-time">${r.time}</span></div>`;
+    // for a completed sun moment, show the logged minutes in place of the window time
+    const right = (r.done && r.min) ? `${r.min} min` : r.time;
+    return `<div class="${cls}"><span class="w-icon">${r.icon}</span><span class="w-name">${r.name}${done}</span><span class="w-time">${right}</span></div>`;
   }).join("");
 }
 
@@ -1012,27 +1035,6 @@ function renderMoments() {
   $("tlCount").textContent = count === 3 ? "All 3 ✓" : `${count} of 3`;
 }
 
-/* gentle journey: cumulative days with any light logged; grows, never resets */
-function journeyInfo() {
-  const all = getMoments();
-  const days = Object.keys(all).filter(k => {
-    const m = all[k]; return m && (m.morning || m.midday || m.evening);
-  }).length;
-  let plant, label;
-  if (days === 0)       { plant = "🌱"; label = "Plant your first day of light"; }
-  else if (days === 1)  { plant = "🌱"; label = "Day 1. Your journey begins."; }
-  else if (days <= 6)   { plant = "🌱"; label = `${days} days in · finding your rhythm`; }
-  else if (days <= 13)  { plant = "🌿"; label = `${days} days of light · one week strong`; }
-  else if (days <= 29)  { plant = "🌿"; label = `${days} days · two weeks and growing`; }
-  else if (days <= 89)  { plant = "🌳"; label = `${days} days · a month of light`; }
-  else                  { plant = "🌳"; label = `${days} days · deeply rooted`; }
-  return { days, plant, label };
-}
-function renderJourney() {
-  const j = journeyInfo();
-  $("jPlant").textContent = j.plant;
-  $("jLabel").textContent = j.label;
-}
 
 /* rotating daily light tip (stable per day) */
 const TIPS = [
@@ -1067,16 +1069,24 @@ function renderAll() {
   $("heroTitle").textContent = state.title;
   $("heroAction").innerHTML = state.action || "";
 
-  // contextual check-in for the current light moment
+  // contextual action button: sun-time stopwatch for sun moments, simple tap for evening
   currentMoment = state.moment || null;
   const btn = $("checkinBtn");
-  if (currentMoment) {
+  const sess = getSession();
+  if (sess) {
+    // a sun session is running (regardless of current moment)
+    btn.classList.remove("hidden", "done");
+    btn.textContent = "Stop & log ■";
+    btn.disabled = false;
+  } else if (currentMoment) {
+    const meta = MOMENT_META[currentMoment];
     btn.classList.remove("hidden");
     if (todayMoments()[currentMoment]) {
-      btn.textContent = MOMENT_LABELS[currentMoment][1];
+      const mins = todaySunMin()[currentMoment];
+      btn.textContent = meta.done + (mins ? ` · ${mins} min` : "");
       btn.classList.add("done"); btn.disabled = true;
     } else {
-      btn.textContent = MOMENT_LABELS[currentMoment][0];
+      btn.textContent = meta.tap;
       btn.classList.remove("done"); btn.disabled = false;
     }
   } else {
@@ -1086,9 +1096,11 @@ function renderAll() {
   $("tSunrise").textContent = fmtTime(day.sunrise);
   $("tSunset").textContent = fmtTime(day.sunset);
   const fmtHour = d => d.toLocaleTimeString([], { hour: "numeric" }).replace(" ", "");
+  const sunTot = todaySunTotal();
+  const sunBit = sunTot ? `<b>${sunTot} min</b> of sun today · ` : "";
   const uvPeakBit = wx?.uvPeak && wx?.uvMax != null ? ` · UV peak <b>${Math.round(wx.uvMax)}</b> at ${fmtHour(wx.uvPeak)}` : "";
   $("glance").innerHTML = (day.sunrise && day.sunset)
-    ? `<b>${fmtDur(day.sunset - day.sunrise)}</b> daylight · noon <b>${fmtTime(day.solarNoon)}</b>${uvPeakBit}`
+    ? `${sunBit}<b>${fmtDur(day.sunset - day.sunrise)}</b> daylight · noon <b>${fmtTime(day.solarNoon)}</b>${uvPeakBit}`
     : "";
   renderArc(day);
   renderWindows(day);
@@ -1112,9 +1124,25 @@ function fmtCountdown(ms) {
   if (h > 0) return { text: `${h}h ${m}m`, ticking: false };
   return { text: `${m}:${String(sec).padStart(2, "0")}`, ticking: true };
 }
+function fmtStopwatch(ms) {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  const m = Math.floor(s / 60), sec = s % 60;
+  return `${m}:${String(sec).padStart(2, "0")}`;
+}
 function renderTimer() {
-  const day = lastDay;
   const val = $("atValue"), lab = $("atLabel");
+  // a running sun session takes over the arc display: live count-up
+  const sess = getSession();
+  if (sess) {
+    const goal = MOMENT_META[sess.moment]?.goal || 0;
+    const ms = sessionElapsedMs();
+    const hit = goal && ms >= goal * 60000;
+    lab.textContent = hit ? `Sun time · goal reached ✓` : `Sun time · goal ${goal} min`;
+    val.textContent = fmtStopwatch(ms);
+    val.classList.add("ticking");
+    return;
+  }
+  const day = lastDay;
   if (!day || !day.sunrise || !day.sunset) {
     lab.textContent = day && day.polar === "day" ? "Midnight sun" : day && day.polar === "night" ? "Polar night" : "";
     val.textContent = day && day.polar ? "—" : "";
@@ -1401,14 +1429,27 @@ $("icsBtn").addEventListener("click", () => {
   toast("Open the file to add to your calendar 📅");
 });
 
-/* ---------- check-in ---------- */
+/* ---------- action button: start / stop stopwatch, or simple tap ---------- */
 $("checkinBtn").addEventListener("click", () => {
+  const sess = getSession();
+  if (sess) {                                   // stop & log the sun session
+    const mins = stopSession();
+    renderAll();
+    const count = MOMENTS.filter(k => todayMoments()[k]).length;
+    toast(count === 3 ? `${mins} min of sun. All three today ☀️` : `Logged ${mins} min of sun ☀️`);
+    return;
+  }
   if (!currentMoment) return;
-  logMoment(currentMoment);
-  renderAll();
-  const count = MOMENTS.filter(k => todayMoments()[k]).length;
-  toast(count === 3 ? "All three moments today ☀️ Beautiful" :
-        currentMoment === "evening" ? "Sleep well 🌙" : "Logged ☀️ Nice");
+  if (MOMENT_META[currentMoment].sun) {         // start the stopwatch
+    startSession(currentMoment);
+    renderAll();
+    renderTimer();
+    toast("Timing your sun. Tap Stop when you head in.");
+  } else {                                       // evening: simple tap
+    logMoment(currentMoment);
+    renderAll();
+    toast("Sleep well 🌙");
+  }
 });
 
 /* ---------- learn / education ----------
