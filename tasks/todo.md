@@ -160,3 +160,11 @@ Next steps (not yet built):
 - Paywall UI + the pricing ladder; wire to StoreKit/RevenueCat when wrapping.
 - App Store wrapper (PWABuilder or Capacitor) + native push notifications; App Store listing assets.
 - Deeper education + copy pass; possible dedicated marketing landing page (web) separate from the app.
+
+## Round 11 (2026-07-09, de-purple + declutter + elevate timer)
+
+Feedback: not a fan of purple; crowded/overwhelming again; gear toward insight + action; remove journey "Day 1 begins" copy; sun timer should be an important component.
+- Palette de-purpled: evening is now calm deep navy (was saturated purple), night accent shifted purple→soft sky blue, golden top and dawn mid de-purpled, sunset arrow purple→warm dusk. Blue-and-warm system, no purple.
+- Hero decluttered to pure insight+action: removed the explanatory sub-paragraph AND the journey line ("Day 1 begins"). Hero is now state pill → arc+timer → sunrise/sunset → title → best-time → check-in.
+- Sun timer elevated to the hero's focal point: value 30px→40px (46px desktop), bolder label. It's now the dominant element.
+- Verified morning + evening states, check-in updates count, zero console errors.

@@ -37,12 +37,13 @@
   }
   /* each time of day gets a distinct sky: pre-dawn indigo → peach dawn → clear blue morning →
      luminous midday → amber golden hour → violet dusk → deep night */
-  .theme-dawn    { --bg-top:#1c1d44; --bg-mid:#3a2f57; --bg-bottom:#6b4a5f; --glow:rgba(255,168,140,.32); --accent:#ffb59b; --accent-soft:rgba(255,181,155,.2); }
+  /* blue-and-warm sky palette, purple removed */
+  .theme-dawn    { --bg-top:#141a34; --bg-mid:#39374f; --bg-bottom:#6a4c50; --glow:rgba(255,172,140,.3);  --accent:#ffb59b; --accent-soft:rgba(255,181,155,.2); }
   .theme-morning { --bg-top:#123056; --bg-mid:#2d5583; --bg-bottom:#5e83a8; --glow:rgba(255,206,120,.34); --accent:#ffd27a; --accent-soft:rgba(255,210,122,.2); }
   .theme-midday  { --bg-top:#134a86; --bg-mid:#2f74ad; --bg-bottom:#63a0c9; --glow:rgba(255,241,196,.4);  --accent:#fff0b0; --accent-soft:rgba(255,240,176,.22); }
-  .theme-golden  { --bg-top:#241a3d; --bg-mid:#6b3a4e; --bg-bottom:#b06a49; --glow:rgba(255,158,92,.36);  --accent:#ffb066; --accent-soft:rgba(255,176,102,.2); }
-  .theme-evening { --bg-top:#141031; --bg-mid:#2f2352; --bg-bottom:#4a2f63; --glow:rgba(190,150,220,.28); --accent:#d6a8e6; --accent-soft:rgba(214,168,230,.18); }
-  .theme-night   { --bg-top:#0a1020; --bg-mid:#0f1830; --bg-bottom:#141d3a; --glow:rgba(120,140,230,.22); --accent:#aeb8ff; --accent-soft:rgba(174,184,255,.18); }
+  .theme-golden  { --bg-top:#1a2340; --bg-mid:#6a4844; --bg-bottom:#b06a49; --glow:rgba(255,158,92,.34);  --accent:#ffb066; --accent-soft:rgba(255,176,102,.2); }
+  .theme-evening { --bg-top:#0f1730; --bg-mid:#1f2b46; --bg-bottom:#31415d; --glow:rgba(205,158,128,.22); --accent:#e6b892; --accent-soft:rgba(230,184,146,.16); }
+  .theme-night   { --bg-top:#0a1020; --bg-mid:#0f1830; --bg-bottom:#141d3a; --glow:rgba(120,140,230,.2);  --accent:#a6bce8; --accent-soft:rgba(166,188,232,.18); }
 
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html { height: 100%; }
@@ -89,7 +90,7 @@
     .hero .sun-times { max-width: 440px; margin: -2px auto 0; }
     .hero h1 { font-size: 42px; margin-top: 2px; }
     .hero p { font-size: 15.5px; max-width: 48ch; }
-    .at-value { font-size: 34px; }
+    .at-value { font-size: 46px; }
     .hero-body { margin-top: 20px; }
     .state-card { max-width: 540px; margin: 0 auto; }
     footer { max-width: 760px; margin: 0 auto; }
@@ -175,8 +176,8 @@
     position: absolute; left: 0; right: 0; top: 52%; transform: translateY(-50%);
     text-align: center; pointer-events: none;
   }
-  .at-label { font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 3px; }
-  .at-value { font-family: var(--serif); font-weight: 400; font-size: 30px; letter-spacing: .01em; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1; }
+  .at-label { font-size: 10.5px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 5px; }
+  .at-value { font-family: var(--serif); font-weight: 400; font-size: 40px; letter-spacing: .01em; color: var(--ink); font-variant-numeric: tabular-nums; line-height: 1; }
   .at-value.ticking { color: var(--accent); }
   .arc-track { stroke: rgba(255,255,255,.1); }
   .arc-day { stroke: url(#arcGrad); }
@@ -186,7 +187,7 @@
   .st.st-r { flex-direction: row; }
   .st-ico { font-size: 15px; font-weight: 700; line-height: 1; }
   .st-ico.rise { color: #ffd27a; }
-  .st-ico.set { color: #d3a0c0; }
+  .st-ico.set { color: #e0a37e; }
   .st-wrap { display: flex; flex-direction: column; line-height: 1.15; }
   .st.st-r .st-wrap { text-align: right; }
   .st-lab { font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); }
@@ -498,13 +499,8 @@
       </div>
       <div class="hero-body">
         <h1 id="heroTitle">—</h1>
-        <p id="heroSub">—</p>
         <div class="action" id="heroAction"></div>
         <button class="checkin hidden" id="checkinBtn">I got outside ☀️</button>
-        <div class="journey" id="journeyLine">
-          <span class="j-plant" id="jPlant">🌱</span>
-          <span class="j-label" id="jLabel">Start your light journey</span>
-        </div>
       </div>
     </div>
 
@@ -1069,7 +1065,6 @@ function renderAll() {
   applyTheme(day);
   $("heroState").textContent = state.label;
   $("heroTitle").textContent = state.title;
-  $("heroSub").textContent = state.sub;
   $("heroAction").innerHTML = state.action || "";
 
   // contextual check-in for the current light moment
@@ -1100,7 +1095,6 @@ function renderAll() {
   renderChips();
   renderVitaminChip(day);
   renderMoments();
-  renderJourney();
   renderEduTip();
   renderTimer();
   checkReminders(day);
