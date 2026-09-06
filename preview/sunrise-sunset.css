@@ -1,0 +1,108 @@
+/* Sunrise / sunset refinement. The horizon is the data view, not a separate scene. */
+:root {
+  --ocean: #111d2b;
+  --paper: #f0eee9;
+  --muted: #b0bac7;
+  --gold: #eee9df;
+  --dawn: #ecb496;
+  --dusk: #b5b9e2;
+  --rule: rgba(214,223,236,.15);
+}
+.brand span { display:none; }
+.eyebrow { color:var(--muted); }
+.primary { background:#ede9e2; color:#182431; border-radius:6px; }
+.running .primary { background:#dce2eb; }
+#light-window, #home-slot #light-window {
+  background:transparent;
+  border-radius:0;
+  overflow:visible;
+}
+.edge { display:none; }
+#intro-slot #light-window { width:100%; height:220px; }
+#intro-slot .window-inner { padding:22px; bottom:24px; }
+#home-slot #light-window { min-height:208px; }
+.window-inner { isolation:isolate; }
+.timeline { isolation:isolate; }
+/* Atmosphere is anchored to the same y-coordinate as the actual time ruler. */
+.light-wash, #home-slot .light-wash {
+  position:absolute;
+  inset:auto;
+  left:-22px;
+  right:-22px;
+  top:-54px;
+  height:150px;
+  pointer-events:none;
+  z-index:-1;
+  background:
+    radial-gradient(ellipse 54% 53% at 9% 66%,rgba(221,131,100,.34),transparent 91%),
+    radial-gradient(ellipse 58% 55% at 92% 66%,rgba(113,112,186,.34),transparent 90%),
+    radial-gradient(ellipse 80% 23% at 50% 67%,rgba(146,168,202,.16),transparent 100%);
+}
+.light-wash:before {
+  content:"";
+  position:absolute;
+  inset:auto;
+  clip-path:none;
+  top:98px;
+  left:0;
+  right:0;
+  height:1px;
+  opacity:.72;
+  background:linear-gradient(90deg,transparent,var(--dawn) 10%,#d3c4cb 50%,var(--dusk) 90%,transparent);
+}
+.light-wash:after {
+  content:"";
+  position:absolute;
+  inset:auto;
+  top:99px;
+  left:0;
+  right:0;
+  height:51px;
+  background:linear-gradient(180deg,rgba(17,29,43,.45),var(--ocean));
+}
+#home-slot .light-wash:before { opacity:.72; }
+.light-track { background:rgba(223,223,236,.25); z-index:2; }
+.light-progress { height:1px; top:0; background:linear-gradient(90deg,var(--dawn),#eee6dc); }
+.light-track:before, .light-track:after { display:none; }
+#marker { color:var(--paper); z-index:4; }
+#marker i { background:var(--paper); outline:3px solid rgba(17,29,43,.45); }
+#marker-label { bottom:19px; }
+.sun-event { position:absolute; pointer-events:none; width:22px; z-index:1; }
+.sun-event.rising {
+  top:33px;
+  left:-11px;
+  height:11px;
+  border-radius:22px 22px 0 0;
+  background:linear-gradient(180deg,#f6d4b5,var(--dawn));
+}
+.sun-event.setting {
+  top:44px;
+  right:-11px;
+  height:9px;
+  border-radius:0 0 22px 22px;
+  background:linear-gradient(180deg,var(--dusk),rgba(181,185,226,.25));
+}
+.light-wash, #home-slot .light-wash { mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent); }
+.sun-labels { position:relative; z-index:5; }
+.sun-labels>div:first-child p, #intro-slot .sun-labels>div:first-child p { color:var(--dawn); }
+.sun-labels>div:last-child p, #intro-slot .sun-labels>div:last-child p { color:var(--dusk); }
+.sun-labels strong { color:var(--paper); font-size:1.6rem; }
+#intro-slot .timeline { height:76px; }
+#intro-slot .sun-labels p { font-size:.875rem; }
+#home-slot #light-window[data-polar="day"] .sun-event,
+#home-slot #light-window[data-polar="night"] .sun-event { display:none; }
+#home-slot #light-window[data-polar="night"] .light-wash { opacity:.25; }
+#home-slot #light-window[data-polar="day"] .light-wash { opacity:.65; }
+.solar-note { padding-top:4px; }
+dialog { background:#182635; }
+@media(max-width:350px) {
+  #intro-slot #light-window { width:100%; height:200px; }
+  #intro-slot .window-inner { padding:18px; }
+  .sun-labels strong { font-size:1.3rem; }
+  .light-wash, #home-slot .light-wash { left:-18px; right:-18px; }
+}
+@media(max-height:820px) {
+  #intro-slot #light-window { width:100%; max-width:100%; height:9rem; }
+  #intro-slot .window-inner { bottom:8px; padding:16px; }
+  #intro-slot .timeline { height:62px; }
+}
